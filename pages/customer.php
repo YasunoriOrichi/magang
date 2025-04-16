@@ -58,7 +58,7 @@ include '../connect.php';
 
   <!-- Main Content -->
   <div class="p-6 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Kelola Kustoer</h1>
+    <h1 class="text-2xl font-bold mb-6">Kelola Kustomer</h1>
   
     <!-- Form Tambah Item -->
     <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
@@ -78,7 +78,7 @@ include '../connect.php';
   
     <!-- Daftar Item -->
     <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-lg font-semibold mb-4 text-gray-800">Daftar Item</h2>
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Daftar Kustomer</h2>
       <table class="table-auto w-full text-sm text-left text-gray-700">
         <thead class="bg-gray-200">
           <tr>
@@ -104,9 +104,11 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
                   echo "<td>
-                        <button type='submit'
+                        <form action='customerEdit.php' method='GET'>
+                        <button type='submit' name='ID' value='" . $row['ID'] . "'
                             class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
                         </button>
+                        </form>
                         </td>";
                   echo "<td>
                         <form action='../function/deleteCustomer.php' method='GET'>

@@ -112,8 +112,8 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
                   echo "<td class='px-4 py-2'>Rp " . number_format($row['PRICE'], 0, ',', '.') . "</td>";
                   echo "<td>
-                        <form action='itemEdit.php' method='POST'>
-                        <button type='submit'
+                        <form action='itemEdit.php' method='GET'>
+                        <button type='submit' name='ID' value='" . $row['ID'] . "'
                             class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
                         </button>
                         </form>
@@ -130,22 +130,9 @@ include '../connect.php';
                   echo "</tr>";
               }
           } else {
-              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
+              echo "<tr><td colspan='6' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
           }
           ?>
-
-          <!-- Contoh Data Static -->
-          <!-- <tr class="hover:bg-gray-100">
-            <td class="px-4 py-2">1</td>
-            <td class="px-4 py-2">Keripik Pisang</td>
-            <td class="px-4 py-2">Rp 15.000</td>
-          </tr>
-          <tr class="hover:bg-gray-100">
-            <td class="px-4 py-2">2</td>
-            <td class="px-4 py-2">Kerupuk Udang</td>
-            <td class="px-4 py-2">Rp 10.000</td>
-          </tr> -->
-          <!-- Jika menggunakan PHP atau JS, data bisa di-loop di sini -->
         </tbody>
       </table>
     </div>

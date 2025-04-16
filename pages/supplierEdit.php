@@ -1,7 +1,25 @@
 <?php
 // Include the database connection file
 include '../connect.php';
-// Fetch data from the database
+    // Ambil ID supplier dari URL
+    $id = $_GET['ID'];
+    // Query untuk mengambil data customer berdasarkan ID
+    $sql = "SELECT * FROM supplier WHERE ID = '$id'";
+    $result = $conn->query($sql);
+
+    // Cek apakah data ditemukan
+    if ($result->num_rows > 0) {
+      // Ambil data customer
+      $row = $result->fetch_assoc();
+      $id = $row['ID'];  // ID customer yang akan ditampilkan di form
+      $nama = $row['NAME'];  // Nama customer yang akan ditampilkan di form
+      $ref_no = $row['REF_NO'];  // Nomor referensi customer yang akan ditampilkan di form
+
+    } else {
+        echo "Supplier tidak ditemukan.";
+        echo "<script>window.location.href='supplier.php';</script>";
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -58,27 +76,11 @@ include '../connect.php';
 
   <!-- Main Content -->
   <div class="p-6 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-200 mb-6">Kelola Item</h1>
+    <h1 class="text-2xl font-bold mb-6">Edit Supplier</h1>
 
-    <!-- Form Tambah Item -->
-    <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
-      <h2 class="text-lg font-semibold mb-4">Tambah Supplier Baru</h2>
-      <form action="../function/addSupplier.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label for="nama" class="block mb-1 text-sm font-medium">Nama Supplier</label>
-          <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira"
-            class="w-full px-12 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        </div>
-        <div class="flex items-end">
-          <button type="submit"
-            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Tambah</button>
-        </div>
-      </form>
-    </div>
-  
-    <!-- Daftar Item -->
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-lg font-semibold mb-4 text-gray-800">Daftar Item</h2>
+        <!-- Data Kustomer Sebelumnya -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Data Supplier Sebelumnya</h2>
       <table class="table-auto w-full text-sm text-left text-gray-700">
         <thead class="bg-gray-200">
           <tr>
@@ -88,32 +90,30 @@ include '../connect.php';
           </tr>
         </thead>
         <tbody>
-        <?php
-          // Fetch data from the database
-          $query = "SELECT * FROM supplier";
-          $result = mysqli_query($conn, $query);
-
-          // Check if there are results
-          if (mysqli_num_rows($result) > 0) {
-              // Loop through the results and display them in the table
-              while ($row = mysqli_fetch_assoc($result)) {
-                  echo "<tr class='hover:bg-gray-100'>";
-                  echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
-                  echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
-                  echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
-                  echo "</tr>";
-              }
-          } else {
-              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
-          }
-          ?>
-      </tbody>
+          <th class="px-4 py-2"><?= $id ?></th>
+          <th class="px-4 py-2"><?= $ref_no ?></th>
+          <th class="px-4 py-2"><?= $nama ?></th>
+        </tbody>
       </table>
+    </div>
+  
+    <!-- Form Tambah Item -->
+    <div class="bg-gray-800 text-white rounded-xl shadow-md p-6">
+      <h2 class="text-lg font-semibold mb-4">Perbarui Data Supplier</h2>
+      <form action="../function/udpateSupplier.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label for="nama" class="block mb-1 text-sm font-medium">Nama Supplier yang Baru</label>
+          <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira"
+            class="w-full px-12 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" name="id" value= <?= $row['ID'] ?>
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Perbarui</button>
+        </div>
+      </form>
     </div>
   </div>
   </div>
-  
 </div>
-
 </body>
 </html>

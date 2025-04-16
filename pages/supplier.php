@@ -104,9 +104,12 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
                   echo "<td>
-                        <button type='submit'
-                            class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
+                        <form action='supplierEdit.php' method='GET'>
+                        <button type='submit' name='ID' value='" . $row['ID'] . "'
+                            class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-2 py-1 rounded-md w-full'>
+                            Edit
                         </button>
+                        </form>
                         </td>";
                   echo "<td>
                         <form action='../function/deleteSupplier.php' method='GET'>
@@ -119,7 +122,7 @@ include '../connect.php';
                   echo "</tr>";
               }
           } else {
-              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
+              echo "<tr><td colspan='5' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
           }
           ?>
       </tbody>

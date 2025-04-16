@@ -1,7 +1,26 @@
 <?php
 // Include the database connection file
 include '../connect.php';
-// Fetch data from the database
+    // Ambil ID customer dari URL
+    $id = $_GET['ID'];
+    // Query untuk mengambil data customer berdasarkan ID
+    $sql = "SELECT * FROM item WHERE ID = '$id'";
+    $result = $conn->query($sql);
+
+    // Cek apakah data ditemukan
+    if ($result->num_rows > 0) {
+        // Ambil data customer
+        $row = $result->fetch_assoc();
+        $id = $row['ID'];  // ID customer yang akan ditampilkan di form
+        $nama = $row['NAME'];  // Nama customer yang akan ditampilkan di form
+        $ref_no = $row['REF_NO'];  // Nomor referensi customer yang akan ditampilkan di form
+        $harga = $row['PRICE'];  // Harga customer yang akan ditampilkan di form
+
+    } else {
+        echo "Customer tidak ditemukan.";
+        echo "<script>window.location.href='customer.php';</script>";
+        exit;
+    }
 ?>
 
 <!DOCTYPE html>
@@ -13,7 +32,6 @@ include '../connect.php';
   <title>Home</title>
 </head>
 <body class="bg-gray-100">
-
   <nav class="bg-gray-800 text-white shadow-md">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex justify-between h-16 items-center">
@@ -57,84 +75,51 @@ include '../connect.php';
   </aside>
 
   <!-- Main Content -->
-  <div class="p-6 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Kelola Item</h1>
+  <div class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-6">Edit Item</h1>
 
-    <!-- Form Tambah Item -->
-    <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
-      <h2 class="text-lg font-semibold mb-4">Tambah Item Baru</h2>
-      <form action="../function/addItem.php" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label for="nama" class="block mb-1 text-sm font-medium">Nama Item</label>
-          <input type="text" id="nama" name="nama" placeholder="Contoh: Keripik Pisang"
-            class="w-full px-3 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        </div>
-        <div>
-          <label for="harga" class="block mb-1 text-sm font-medium">Harga</label>
-          <input type="number" id="harga" name="harga" placeholder="Contoh: 15000"
-            class="w-full px-3 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
-        </div>
-        <div class="flex items-end">
-          <button type="submit"
-            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Tambah</button>
-        </div>
-      </form>
-    </div>
-  
-    <!-- Daftar Item -->
-    <div class="bg-white rounded-xl shadow-md p-6">
-      <h2 class="text-lg font-semibold mb-4 text-gray-800">Daftar Item</h2>
+        <!-- Data Kustomer Sebelumnya -->
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-4 text-gray-800">Data Item Sebelumnya</h2>
       <table class="table-auto w-full text-sm text-left text-gray-700">
         <thead class="bg-gray-200">
           <tr>
             <th class="px-4 py-2">ID</th>
             <th class="px-4 py-2">No Reff</th>
-            <th class="px-4 py-2">Nama Item</th>
-            <th class="px-4 py-2">Harga</th>
+            <th class="px-4 py-2">Nama</th>
+            <th class="=px-4 py-2">Harga</th>
           </tr>
         </thead>
         <tbody>
-
-          <?php
-          // Fetch data from the database
-          $query = "SELECT * FROM item";
-          $result = mysqli_query($conn, $query);
-
-          // Check if there are results
-          if (mysqli_num_rows($result) > 0) {
-              // Loop through the results and display them in the table
-              while ($row = mysqli_fetch_assoc($result)) {
-                  echo "<tr class='hover:bg-gray-100'>";
-                  echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
-                  echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
-                  echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
-                  echo "<td class='px-4 py-2'>Rp " . number_format($row['PRICE'], 0, ',', '.') . "</td>";
-                  echo "</tr>";
-              }
-          } else {
-              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
-          }
-          ?>
-
-          <!-- Contoh Data Static -->
-          <!-- <tr class="hover:bg-gray-100">
-            <td class="px-4 py-2">1</td>
-            <td class="px-4 py-2">Keripik Pisang</td>
-            <td class="px-4 py-2">Rp 15.000</td>
-          </tr>
-          <tr class="hover:bg-gray-100">
-            <td class="px-4 py-2">2</td>
-            <td class="px-4 py-2">Kerupuk Udang</td>
-            <td class="px-4 py-2">Rp 10.000</td>
-          </tr> -->
-          <!-- Jika menggunakan PHP atau JS, data bisa di-loop di sini -->
+          <th class="px-4 py-2"><?= $id ?></th>
+          <th class="px-4 py-2"><?= $ref_no ?></th>
+          <th class="px-4 py-2"><?= $nama ?></th>
+          <th class="=px-4 py-2"><?= $harga ?></th>
         </tbody>
       </table>
     </div>
-  </div>
-  </div>
   
-</div>
-
+    <!-- Form Tambah Item -->
+    <div class="bg-gray-800 text-white rounded-xl shadow-md p-6">
+      <h2 class="text-lg font-semibold mb-4">Perbarui Data Item</h2>
+      <form action="../function/updateItem.php" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+        <div>
+          <label for="nama" class="block mb-1 text-sm font-medium">Nama Item </label>
+          <input type="text" id="nama" name="nama" placeholder="Contoh: Apel"
+            class="w-full px-12 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+        <div>
+          <label for="nama" class="block mb-1 text-sm font-medium">Harga Item </label>
+          <input type="text" id="harga" name="harga" placeholder="Contoh: 15000"
+            class="w-full px-12 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+        </div>
+        <div class="flex items-end">
+          <button type="submit" name="id" value= <?= $row['ID'] ?>
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Perbarui</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  </div>
 </body>
 </html>

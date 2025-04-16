@@ -1,2 +1,2 @@
 # Magang
- tugas magang
+ tugas magang dari perusahaan WEVELOPE untuk sekolah tercinta
