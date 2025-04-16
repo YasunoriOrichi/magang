@@ -4,7 +4,7 @@
         $id = $_GET['ID'];
 
         // Hapus data dari database
-        $query = "DELETE FROM suppliers WHERE ID = '$id'";
+        $query = "DELETE FROM supplier WHERE ID = '$id'";
         $hasil = mysqli_query($conn, $query);
 
         if ($hasil) {

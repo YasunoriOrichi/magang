@@ -90,7 +90,7 @@ include '../connect.php';
         <tbody>
         <?php
           // Fetch data from the database
-          $query = "SELECT * FROM suppliers";
+          $query = "SELECT * FROM supplier";
           $result = mysqli_query($conn, $query);
 
           // Check if there are results

@@ -99,7 +99,7 @@ include '../connect.php';
 
           <?php
           // Fetch data from the database
-          $query = "SELECT * FROM items";
+          $query = "SELECT * FROM item";
           $result = mysqli_query($conn, $query);
 
           // Check if there are results

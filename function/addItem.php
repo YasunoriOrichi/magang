@@ -5,7 +5,7 @@
         $price = $_POST['harga'];
 
         // Prepare and bind
-        $query = "INSERT INTO items (name, price) VALUES ('$name', '$price')";
+        $query = "INSERT INTO item (name, price) VALUES ('$name', '$price')";
 
         // Execute the statement
         if (mysqli_query($conn, $query)) {

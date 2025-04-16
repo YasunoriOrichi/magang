@@ -4,7 +4,7 @@
         $name = $_POST['nama'];
 
         // Prepare and bind
-        $query = "INSERT INTO suppliers (name) VALUES ('$name')";
+        $query = "INSERT INTO supplier (name) VALUES ('$name')";
 
         // Execute the statement
         if (mysqli_query($conn, $query)) {

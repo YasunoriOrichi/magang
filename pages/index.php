@@ -2,7 +2,7 @@
 include '../connect.php';
 
 // Hitung total item
-$itemQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM items");
+$itemQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM item");
 $itemData = mysqli_fetch_assoc($itemQuery);
 $totalItem = $itemData['total'];
 
@@ -12,7 +12,7 @@ $customerData = mysqli_fetch_assoc($customerQuery);
 $totalCustomer = $customerData['total'];
 
 // Hitung total supplier
-$supplierQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM suppliers");
+$supplierQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM supplier");
 $supplierData = mysqli_fetch_assoc($supplierQuery);
 $totalSupplier = $supplierData['total'];
 ?>
@@ -110,7 +110,7 @@ $totalSupplier = $supplierData['total'];
       <tbody>
       <?php
           // Fetch data from the database
-          $query = "SELECT * FROM items";
+          $query = "SELECT * FROM item";
           $result = mysqli_query($conn, $query);
 
           // Check if there are results
@@ -181,7 +181,7 @@ $totalSupplier = $supplierData['total'];
       <tbody>
       <?php
           // Fetch data from the database
-          $query = "SELECT * FROM suppliers";
+          $query = "SELECT * FROM supplier";
           $result = mysqli_query($conn, $query);
 
           // Check if there are results
