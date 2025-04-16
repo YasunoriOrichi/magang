@@ -1,19 +1,20 @@
 <?php
-include '../connect.php';
+    include '../connect.php';
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $name = $_POST['nama'];
+        $price = $_POST['harga'];
 
+        // Prepare and bind
+        $query = "INSERT INTO items (name, price) VALUES ('$name', '$price')";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama  = $_POST['nama'];
-    $harga = $_POST['harga'];
+        // Execute the statement
+        if (mysqli_query($conn, $query)) {
+            echo "<script>window.location.href='../pages/item.php';</script>";
+        } else {
+            echo "Error adding item";
+        }
 
-    $query = "INSERT INTO items (NAME, PRICE) VALUES ('$nama', '$harga')";
-
-    if (mysqli_query($conn, $query)) {
-        echo "Data berhasil ditambahkan.";
-        header("Location: ../pages/item.php");
-    } else {
-        echo "Gagal tambah data: " . mysqli_error($conn);
+        // Close the statement
+        $stmt->close();
     }
-}
-
 ?>

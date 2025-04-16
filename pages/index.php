@@ -1,7 +1,20 @@
 <?php
-// Include the database connection file
 include '../connect.php';
-// Fetch data from the database
+
+// Hitung total item
+$itemQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM items");
+$itemData = mysqli_fetch_assoc($itemQuery);
+$totalItem = $itemData['total'];
+
+// Hitung total customer
+$customerQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM customer");
+$customerData = mysqli_fetch_assoc($customerQuery);
+$totalCustomer = $customerData['total'];
+
+// Hitung total supplier
+$supplierQuery = mysqli_query($conn, "SELECT COUNT(*) AS total FROM suppliers");
+$supplierData = mysqli_fetch_assoc($supplierQuery);
+$totalSupplier = $supplierData['total'];
 ?>
 
 <!DOCTYPE html>
@@ -64,19 +77,19 @@ include '../connect.php';
         <!-- Card 1: Jumlah Item -->
         <div class="bg-red-500 rounded-xl shadow-md p-6 border-l-4 ">
           <h2 class="text-lg font-semibold">Total Item</h2>
-          <p class="mt-2 text-3xl font-bold text-gray-800">128</p>
+          <p class="mt-2 text-3xl font-bold text-gray-800"><?= $totalItem ?></p>
         </div>
     
         <!-- Card 2: Jumlah Customer -->
         <div class="bg-yellow-500 rounded-xl shadow-md p-6 border-l-4">
           <h2 class="text-lg font-semibold">Total Customer</h2>
-          <p class="mt-2 text-3xl font-bold text-gray-800">56</p>
+          <p class="mt-2 text-3xl font-bold text-gray-800"><?= $totalCustomer ?></p>
         </div>
     
         <!-- Card 3: Jumlah Supplier -->
         <div class="bg-green-500 rounded-xl shadow-md p-6 border-l-4">
           <h2 class="text-lg font-semibold">Total Supplier</h2>
-          <p class="mt-2 text-3xl font-bold text-gray-800">12</p>
+          <p class="mt-2 text-3xl font-bold text-gray-800"><?= $totalSupplier ?></p>
         </div>
       </div>
 
@@ -90,23 +103,31 @@ include '../connect.php';
         <tr>
           <th class="px-4 py-2">ID</th>
           <th class="px-4 py-2">No Reff</th>
-          <th class="px-4 py-2">Name</th>
+          <th class="px-4 py-2">Nama</th>
           <th class="px-4 py-2">Price</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">1</td>
-          <td class="px-4 py-2">KP001</td>
-          <td class="px-4 py-2">Keripik Pisang</td>
-          <td class="px-4 py-2">34</td>
-        </tr>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">2</td>
-          <td class="px-4 py-2">KP002</td>
-          <td class="px-4 py-2">Kerupuk Udang</td>
-          <td class="px-4 py-2">20</td>
-        </tr>
+      <?php
+          // Fetch data from the database
+          $query = "SELECT * FROM items";
+          $result = mysqli_query($conn, $query);
+
+          // Check if there are results
+          if (mysqli_num_rows($result) > 0) {
+              // Loop through the results and display them in the table
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<tr class='hover:bg-gray-100'>";
+                  echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
+                  echo "<td class='px-4 py-2'>Rp " . number_format($row['PRICE'], 0, ',', '.') . "</td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
+          }
+          ?>
       </tbody>
     </table>
   </div>
@@ -117,22 +138,31 @@ include '../connect.php';
     <table class="table-auto w-full text-sm text-left text-gray-600">
       <thead class="bg-gray-200 text-gray-700">
         <tr>
+          <th class="px-4 py-2">ID</th>
           <th class="px-4 py-2">No Reff</th>
           <th class="px-4 py-2">Nama</th>
-          <th class="px-4 py-2">ID</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">1</td>
-          <td class="px-4 py-2">Siti</td>
-          <td class="px-4 py-2">Bandung</td>
-        </tr>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">2</td>
-          <td class="px-4 py-2">Rudi</td>
-          <td class="px-4 py-2">Jakarta</td>
-        </tr>
+      <?php
+          // Fetch data from the database
+          $query = "SELECT * FROM customer";
+          $result = mysqli_query($conn, $query);
+
+          // Check if there are results
+          if (mysqli_num_rows($result) > 0) {
+              // Loop through the results and display them in the table
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<tr class='hover:bg-gray-100'>";
+                  echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
+          }
+          ?>
       </tbody>
     </table>
   </div>
@@ -143,22 +173,31 @@ include '../connect.php';
     <table class="table-auto w-full text-sm text-left text-gray-600">
       <thead class="bg-gray-200 text-gray-700">
         <tr>
+          <th class="px-4 py-2">ID</th>
           <th class="px-4 py-2">No Reff</th>
           <th class="px-4 py-2">Nama</th>
-          <th class="px-4 py-2">Price</th>
         </tr>
       </thead>
       <tbody>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">1</td>
-          <td class="px-4 py-2">Bu Tini</td>
-          <td class="px-4 py-2">Keripik</td>
-        </tr>
-        <tr class="hover:bg-gray-100">
-          <td class="px-4 py-2">2</td>
-          <td class="px-4 py-2">Pak Slamet</td>
-          <td class="px-4 py-2">Kerupuk</td>
-        </tr>
+      <?php
+          // Fetch data from the database
+          $query = "SELECT * FROM suppliers";
+          $result = mysqli_query($conn, $query);
+
+          // Check if there are results
+          if (mysqli_num_rows($result) > 0) {
+              // Loop through the results and display them in the table
+              while ($row = mysqli_fetch_assoc($result)) {
+                  echo "<tr class='hover:bg-gray-100'>";
+                  echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
+                  echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
+                  echo "</tr>";
+              }
+          } else {
+              echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
+          }
+          ?>
       </tbody>
     </table>
   </div>

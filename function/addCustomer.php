@@ -1,18 +1,19 @@
 <?php
-include '../connect.php';
+    include '../connect.php';
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        $name = $_POST['nama'];
 
+        // Prepare and bind
+        $query = "INSERT INTO customer (name) VALUES ('$name')";
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $nama  = $_POST['nama'];
+        // Execute the statement
+        if (mysqli_query($conn, $query)) {
+            echo "<script>window.location.href='../pages/customer.php';</script>";
+        } else {
+            echo "Error adding customer";
+        }
 
-    $query = "INSERT INTO customer (NAME) VALUES ('$nama')";
-
-    if (mysqli_query($conn, $query)) {
-        echo "Data berhasil ditambahkan.";
-        header("Location: ../pages/customer.php");
-    } else {
-        echo "Gagal tambah data: " . mysqli_error($conn);
+        // Close the statement
+        $stmt->close();
     }
-}
-
 ?>

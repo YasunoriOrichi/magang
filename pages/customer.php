@@ -58,7 +58,7 @@ include '../connect.php';
 
   <!-- Main Content -->
   <div class="p-6 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold text-gray-200 mb-6">Kelola Item</h1>
+    <h1 class="text-2xl font-bold mb-6">Kelola Kustoer</h1>
   
     <!-- Form Tambah Item -->
     <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
@@ -85,6 +85,8 @@ include '../connect.php';
             <th class="px-4 py-2">ID</th>
             <th class="px-4 py-2">No Reff</th>
             <th class="px-4 py-2">Nama</th>
+            <th class="px-4 py-2">Edit</th>
+            <th class="px-4 py-2">Hapus</th>
           </tr>
         </thead>
         <tbody>
@@ -101,6 +103,20 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
+                  echo "<td>
+                        <button type='submit'
+                            class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
+                        </button>
+                        </td>";
+                  echo "<td>
+                        <form action='../function/deleteCustomer.php' method='GET'>
+                        <button type='submit' name='ID' value='" . $row['ID'] . "'
+                            class='bg-red-400 hover:bg-red-500 text-black font-semibold px-2 py-1 rounded-md w-full'>
+                            Delete
+                        </button>
+                        </form>
+                        </td>";
+                  echo "</tr>";
                   echo "</tr>";
               }
           } else {

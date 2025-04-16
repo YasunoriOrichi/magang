@@ -91,6 +91,8 @@ include '../connect.php';
             <th class="px-4 py-2">No Reff</th>
             <th class="px-4 py-2">Nama Item</th>
             <th class="px-4 py-2">Harga</th>
+            <th class="px-4 py-2">Edit</th>
+            <th class="px-4 py-2">Hapus</th>
           </tr>
         </thead>
         <tbody>
@@ -109,6 +111,22 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
                   echo "<td class='px-4 py-2'>Rp " . number_format($row['PRICE'], 0, ',', '.') . "</td>";
+                  echo "<td>
+                        <form action='itemEdit.php' method='POST'>
+                        <button type='submit'
+                            class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
+                        </button>
+                        </form>
+                        </td>";
+                  echo "<td>
+                        <form action='../function/deleteItem.php' method='GET'>
+                        <button type='submit' name='ID' value='" . $row['ID'] . "'
+                            class='bg-red-400 hover:bg-red-500 text-black font-semibold px-2 py-1 rounded-md w-full'>
+                            Delete
+                        </button>
+                        </form>
+                        </td>";
+                  echo "</tr>";
                   echo "</tr>";
               }
           } else {

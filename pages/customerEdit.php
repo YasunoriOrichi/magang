@@ -23,8 +23,8 @@ include '../connect.php';
         <div class="hidden md:flex space-x-6">
           <a href="index.php" class="hover:text-yellow-400">Dashboard</a>
           <a href="item.php" class="hover:text-yellow-400">Item</a>
-          <a href="customer.php" class="hover:text-yellow-400">Customer</a>
-          <a href="supplier.php" class="text-yellow-400">Supplier</a>
+          <a href="customer.php" class="text-yellow-400">Customer</a>
+          <a href="supplier.php" class="hover:text-yellow-400">Supplier</a>
           <!-- Foto Profil -->
           <div class="relative">
             <img src="https://i.pravatar.cc/40?img=12" alt="Admin"
@@ -51,21 +51,39 @@ include '../connect.php';
     <nav class="space-y-4">
       <a href="index.php" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-yellow-400">Dashboard</a>
       <a href="item.php" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-yellow-400">Item</a>
-      <a href="customer.php" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-yellow-400">Customer</a>
-      <a href="supplier.php" class="block py-2 px-4 rounded bg-gray-700 text-yellow-400">Supplier</a>
+      <a href="customer.php" class="block py-2 px-4 rounded bg-gray-700 text-yellow-400">Customer</a>
+      <a href="supplier.php" class="block py-2 px-4 rounded hover:bg-gray-700 hover:text-yellow-400">Supplier</a>
     </nav>
   </aside>
 
   <!-- Main Content -->
   <div class="p-6 max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold mb-6">Kelola Supplier</h1>
+    <h1 class="text-2xl font-bold mb-6">Kelola Item</h1>
+
+    <!-- Fitur -->
+    <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
+      <form action="../function/addCustomer.php" method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="flex items-end">
+          <button type="submit"
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Tambah</button>
+        </div>
+        <div class="flex items-end">
+          <button type="submit"
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Edit</button>
+        </div>
+        <div class="flex items-end">
+          <button type="submit"
+            class="bg-yellow-400 hover:bg-yellow-500 text-black font-semibold px-4 py-2 rounded-md w-full">Hapus</button>
+        </div>
+      </form>
+    </div>
   
     <!-- Form Tambah Item -->
     <div class="bg-gray-800 text-white rounded-xl shadow-md p-6 mb-8">
-      <h2 class="text-lg font-semibold mb-4">Tambah Supplier Baru</h2>
-      <form action="../function/addSupplier.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <h2 class="text-lg font-semibold mb-4">Tambah Kustomer Baru</h2>
+      <form action="../function/addCustomer.php" method="POST" class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label for="nama" class="block mb-1 text-sm font-medium">Nama Supplier</label>
+          <label for="nama" class="block mb-1 text-sm font-medium">Nama Kustomer</label>
           <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira"
             class="w-full px-12 py-2 rounded-md bg-gray-700 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-yellow-400">
         </div>
@@ -85,14 +103,13 @@ include '../connect.php';
             <th class="px-4 py-2">ID</th>
             <th class="px-4 py-2">No Reff</th>
             <th class="px-4 py-2">Nama</th>
-            <th class="px-4 py-2">Edit</th>
-            <th class="px-4 py-2">Hapus</th>
+            <th class="px-4 py-2">Konfigurasi</th>
           </tr>
         </thead>
         <tbody>
         <?php
           // Fetch data from the database
-          $query = "SELECT * FROM suppliers";
+          $query = "SELECT * FROM customer";
           $result = mysqli_query($conn, $query);
 
           // Check if there are results
@@ -103,26 +120,16 @@ include '../connect.php';
                   echo "<td class='px-4 py-2'>" . $row['ID'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['REF_NO'] . "</td>";
                   echo "<td class='px-4 py-2'>" . $row['NAME'] . "</td>";
-                  echo "<td>
-                        <button type='submit'
-                            class='bg-blue-400 hover:bg-blue-500 text-black font-semibold px-4 py-1 rounded-md w-full'>Edit
-                        </button>
-                        </td>";
-                  echo "<td>
-                        <form action='../function/deleteSupplier.php' method='GET'>
-                        <button type='submit' name='ID' value='" . $row['ID'] . "'
-                            class='bg-red-400 hover:bg-red-500 text-black font-semibold px-2 py-1 rounded-md w-full'>
-                            Delete
-                        </button>
-                        </form>
-                        </td>";
+                  echo "<td class='px-4 py-2'>
+                  <button class='bg-yellow-400 hover:bg-yellow-500 text-black font-semibold py-2 rounded-md w-full'>Tambah</button>
+                  </td>";
                   echo "</tr>";
               }
           } else {
               echo "<tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>";
           }
           ?>
-      </tbody>
+        </tbody>
       </table>
     </div>
   </div>
