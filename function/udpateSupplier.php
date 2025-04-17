@@ -13,8 +13,5 @@
         } else {
             echo "Error updating supplier";
         }
-
-        // Close the statement
-        $stmt->close();
     }
 ?>
