@@ -14,8 +14,5 @@
         } else {
             echo "Error adding item";
         }
-
-        // Close the statement
-        $stmt->close();
     }
 ?>

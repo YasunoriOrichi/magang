@@ -4,17 +4,25 @@
         $name = $_POST['nama'];
         $price = $_POST['harga'];
 
-        // Prepare and bind
-        $query = "INSERT INTO item (name, price) VALUES ('$name', '$price')";
+        // AUTO NO REF
+        $initial = strtoupper(substr($name, 0, 1));
+        $sql = "SELECT COUNT(*) AS jumlah FROM item WHERE ref_no LIKE '$initial%'";
+        $result = $conn->query($sql);
+        $row = $result->fetch_assoc();
+        $nomorUrut = $row['jumlah'] + 1;
+        $nomorFormatted = str_pad($nomorUrut, 3, "0", STR_PAD_LEFT);
 
-        // Execute the statement
-        if (mysqli_query($conn, $query)) {
+        $no_ref = $initial . $nomorFormatted;
+
+        // INSERT INTO item
+        $query = "INSERT INTO item (ref_no, name, price) VALUES ('$no_ref', '$name', '$price')";
+        $result = mysqli_query($conn, $query);
+
+        // CONDITION
+        if ($result) {
             echo "<script>window.location.href='../pages/item.php';</script>";
         } else {
             echo "Error adding item";
         }
-
-        // Close the statement
-        $stmt->close();
     }
 ?>
