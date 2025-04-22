@@ -1,4 +1,6 @@
 <?php
+require_once 'env.php';
+echo getBaseUrl(); 
 include 'connect.php';
 ?>
 
