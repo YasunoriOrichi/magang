@@ -1,27 +1,3 @@
-<?php
-// Include the database connection file
-include '../connect.php';
-    // Ambil ID customer dari URL
-    $id = $_GET['ID'];
-    // Query untuk mengambil data customer berdasarkan ID
-    $sql = "SELECT * FROM customer WHERE ID = '$id'";
-    $result = $conn->query($sql);
-
-    // Cek apakah data ditemukan
-    if ($result->num_rows > 0) {
-        // Ambil data customer
-        $row = $result->fetch_assoc();
-        $id = $row['ID'];  // ID customer yang akan ditampilkan di form
-        $nama = $row['NAME'];  // Nama customer yang akan ditampilkan di form
-        $ref_no = $row['REF_NO'];  // Nomor referensi customer yang akan ditampilkan di form
-
-    } else {
-        echo "Customer tidak ditemukan.";
-        echo "<script>window.location.href='customer.php';</script>";
-        exit;
-    }
-?>
-
 <!doctype html>
 <html lang="en">
   <!--begin::Head-->
@@ -70,8 +46,6 @@ include '../connect.php';
     <div class="app-wrapper">
       <!--begin::Header-->
       <nav class="app-header navbar navbar-expand bg-body">
-
-        <!-- NAVIGATION BAR -->
         <!--begin::Container-->
         <div class="container-fluid">
           <!--begin::Start Navbar Links-->
@@ -269,14 +243,12 @@ include '../connect.php';
         <!--end::Container-->
       </nav>
       <!--end::Header-->
-
-      <!-- SIDEBAR NAVIGATION -->
       <!--begin::Sidebar-->
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <!--begin::Sidebar Brand-->
         <div class="sidebar-brand">
           <!--begin::Brand Link-->
-          <a href="index.php" class="brand-link">
+          <a href="../index.html" class="brand-link">
             <!--begin::Brand Image-->
             <img
               src="../../../dist/assets/img/AdminLTELogo.png"
@@ -301,51 +273,46 @@ include '../connect.php';
               role="menu"
               data-accordion="false"
             >
-              <li class="nav-item">
-                <a href="index.php" class="nav-link">
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-speedometer"></i>
                   <p>
                     Dashboard
                   </p>
                 </a>
               </li>
-              <!-- ITEM -->
               <li class="nav-item">
-                <a href="item.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ui-checks-grid"></i>
                   <p>
                     Item
                   </p>
                 </a>
               </li>
-              <!-- CUSTOMER -->
-              <li class="nav-item menu-open">
-                <a href="customer.php" class="nav-link">
+              <li class="nav-item">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Customer
                   </p>
                 </a>
               </li>
-              <!-- SUPPLIER -->
               <li class="nav-item">
-                <a href="supplier.php" class="nav-link">
+                <a href="#" class="nav-link">
                 <i class="nav-icon bi bi-box-seam-fill"></i>
                 <p>
                     Supplier
                   </p>
                 </a>
               </li>
-              <!-- ITEM CUSTOMER -->
               <li class="nav-item">
-                <a href="itemCustomer.php" class="nav-link">
+                <a href="./docs/introduction.html" class="nav-link">
                 <i class="nav-icon bi bi-pencil-square"></i>
                 <p>Item Customer</p>
                 </a>
               </li>
-              <!-- INVOICE -->
               <li class="nav-item">
-                <a href="invoice.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-filetype-js"></i>
                   <p>
                     Invoice
@@ -359,110 +326,184 @@ include '../connect.php';
         <!--end::Sidebar Wrapper-->
       </aside>
       <!--end::Sidebar-->
-
-      <!-- MAIN CONTENT -->
       <!--begin::App Main-->
       <main class="app-main">
-
-        <!-- JUDUL / HEADER -->
         <!--begin::App Content Header-->
         <div class="app-content-header">
           <!--begin::Container-->
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Kustomer</h3></div>
+              <div class="col-sm-6"><h3 class="mb-0">Small Box</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
                   <li class="breadcrumb-item"><a href="#">Home</a></li>
                   <li class="breadcrumb-item active" aria-current="page">Small Box</li>
                 </ol>
               </div>
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
+            </div>
+            <!--end::Row-->
+          </div>
+          <!--end::Container-->
         </div>
         <!--end::App Content Header-->
-
-        <!-- TABEL DATA KUSTOMER SAAT INI-->
         <!--begin::App Content-->
         <div class="app-content">
           <!--begin::Container-->
           <div class="container-fluid">
-            <!--begin::Row-->
+            <!-- Small Box (Stat card) -->
+            <h5 class="mb-2">Small Box</h5>
+            <!-- Small boxes (Stat box) -->
             <div class="row">
-              <div class="px-5">
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">Data Kustomer Saat Ini</h3>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box text-bg-primary">
+                  <div class="inner">
+                    <h3>150</h3>
+                    <p>Item</p>
                   </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%">#</th>
-                          <th >Nama Kustomer</th>
-                          <th style="width: 15%">Nomor Referal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle">
-                          <td><?= $row['ID'] ?></td>
-                          <td><?= $row['NAME'] ?></td>
-                          <td>
-                            <div>
-                              <div style='width: 50%'><?= $row['REF_NO'] ?>
-                            </div>
-                          </div>
-                        </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-              </div> <!-- /.col -->
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
-        </div> <!--end::Container-->
-
-        <!-- EDIT KUSTOMER -->
-        <!--begin::App Content-->
-        <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-0">
-              <!--begin::Col-->
-              <div class="col-12">
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
               </div>
-              <!--end::Col-->
-              <!--begin::Col-->
-              <div class="px-5">
-                <!--begin::Quick Example-->
-                <div class="card card-primary card-outline mb-4">
-                  <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Edit Kustomer</div></div>
-                  <!--end::Header-->
-                  <!--begin::Form-->
-                  <form action="../function/updateCustomer.php" method="POST">
-                    <!--begin::Body-->
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Nama Kustomer</label>
-                        <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira" class="form-control">
-                      </div>
-                    </div>
-                    <!--end::Body-->
-                    <!--begin::Footer-->
-                    <div class="card-footer">
-                      <button type="submit" name="id" value= <?= $row['ID'] ?> class="btn btn-primary">Submit</button>
-                    </div> <!--end::Footer-->
-                  </form> <!--end::Form-->
-                </div> <!--end::Quick Example-->
-              </div> <!--end::Col-->
-            </div> <!--end::Row-->
-        </div> <!--end::Container-->
-
-      </main> <!--end::App Main-->
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box text-bg-success">
+                  <div class="inner">
+                    <h3>53</h3>
+                    <p>Supplier</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M18.375 2.25c-1.035 0-1.875.84-1.875 1.875v15.75c0 1.035.84 1.875 1.875 1.875h.75c1.035 0 1.875-.84 1.875-1.875V4.125c0-1.036-.84-1.875-1.875-1.875h-.75zM9.75 8.625c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v11.25c0 1.035-.84 1.875-1.875 1.875h-.75a1.875 1.875 0 01-1.875-1.875V8.625zM3 13.125c0-1.036.84-1.875 1.875-1.875h.75c1.036 0 1.875.84 1.875 1.875v6.75c0 1.035-.84 1.875-1.875 1.875h-.75A1.875 1.875 0 013 19.875v-6.75z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box text-bg-warning">
+                  <div class="inner">
+                    <h3>44</h3>
+                    <p>Customer</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-dark link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- ./col -->
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box text-bg-danger">
+                  <div class="inner">
+                    <h3>65</h3>
+                    <p>Invoice</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                      d="M2.25 13.5a8.25 8.25 0 018.25-8.25.75.75 0 01.75.75v6.75H18a.75.75 0 01.75.75 8.25 8.25 0 01-16.5 0z"
+                    ></path>
+                    <path
+                      clip-rule="evenodd"
+                      fill-rule="evenodd"
+                      d="M12.75 3a.75.75 0 01.75-.75 8.25 8.25 0 018.25 8.25.75.75 0 01-.75.75h-7.5a.75.75 0 01-.75-.75V3z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+              </div>
+              <div class="col-lg-3 col-6">
+                <!-- small box -->
+                <div class="small-box text-bg-primary">
+                  <div class="inner">
+                    <h3>150</h3>
+                    <p>Item Customer</p>
+                  </div>
+                  <svg
+                    class="small-box-icon"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    aria-hidden="true"
+                  >
+                    <path
+                      d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.674-.421 60.358 60.358 0 002.96-7.228.75.75 0 00-.525-.965A60.864 60.864 0 005.68 4.509l-.232-.867A1.875 1.875 0 003.636 2.25H2.25zM3.75 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM16.5 20.25a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0z"
+                    ></path>
+                  </svg>
+                  <a
+                    href="#"
+                    class="small-box-footer link-light link-underline-opacity-0 link-underline-opacity-50-hover"
+                  >
+                    More info <i class="bi bi-link-45deg"></i>
+                  </a>
+                </div>
+              </div>
+              <!-- ./col -->
+            </div>
+            <!-- /.row -->
+          </div>
+          <!--end::Container-->
+        </div>
+        <!--end::App Content-->
+      </main>
+      <!--end::App Main-->
     </div>
     <!--end::App Wrapper-->
     <!--begin::Script-->
