@@ -1,5 +1,6 @@
-# Abaikan .env
+# Abaikan env
 .env
+env.php
 
 # Abaikan Laporan Magang
 Laporan Magang PROTOTYPE.docx
