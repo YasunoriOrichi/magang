@@ -16,7 +16,7 @@ include 'connect.php';
 <body>
     <script>
         // Redirect to the connect.php page
-        window.location.href = 'pages/index.php';
+        window.location.href = 'pages/dashboard/index.php';
     </script>
 </body>
 </html>
