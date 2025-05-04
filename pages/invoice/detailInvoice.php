@@ -1,34 +1,36 @@
 <?php
 // Include the database connection file
 include '../../connect.php';
-    $kode_invoice = $_GET['id'];
-
-    // Ambil 3 digit terakhir
-    $id = (int)substr($kode_invoice, -3);
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+} else {
+  echo "ID tidak ditemukan di URL.";
+}
 
     $sql = "SELECT 
-            inv.ID,
+            inv.ID_DETAIL,
             i.NAME AS itemName,
             inv.QTY,
             inv.UNIT_PRICE,
             inv.TOTAL_PRICE
-            FROM invoice inv
+            FROM invoice_detail inv
             JOIN item i ON inv.ITEM = i.ID
-            WHERE inv.ID = '$id'";
+            WHERE inv.ID_DETAIL = '$id'";
     $result = $conn->query($sql);
 
     // Cek apakah data ditemukan
     if ($result->num_rows > 0) {
         // Ambil data customer
         $row = $result->fetch_assoc();
-        $id = $row['ID'];  // ID customer yang akan ditampilkan di form
+        $id = $row['ID_DETAIL'];  // ID customer yang akan ditampilkan di form
         $item = $row['itemName'];  // Nama item yang akan ditampilkan di form
         $unit_price = $row['UNIT_PRICE'];  // Harga item yang akan ditampilkan di form
         $qty = $row['QTY'];  // Jumlah item yang akan ditampilkan di form
         $total_price = $row['TOTAL_PRICE'];  // Total harga item yang akan ditampilkan di form
-    } else {
-        echo "<script>window.location.href='invoice.php';</script>";
-        exit;
+    // } else {
+    //     echo "<script>window.location.href='invoice.php';</script>";
+    //     exit;
+    // }
     }
 ?>
 
@@ -320,47 +322,124 @@ include '../../connect.php';
                 </a>
               </li>
               <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
+              <li class="nav-item  ">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ui-checks-grid"></i>
                   <p>
                     Item
                   </p>
-                </a>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
+                  </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item  ">
+                    <a href="../item/item.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../item/itemAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- CUSTOMER -->
               <li class="nav-item">
-                <a href="../customer/customer.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Customer
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../customer/customer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../customer/customerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- SUPPLIER -->
               <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
                     Supplier
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../supplier/supplier.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Supplier</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../supplier/supplierAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Supplier</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- ITEM CUSTOMER -->
               <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Item Customer
+                  </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- INVOICE -->
               <li class="nav-item menu-open">
-                <a href="../invoice/invoice.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-filetype-js"></i>
                   <p>
                     Invoice
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-open">
+                    <a href="../invoice/invoice.php" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Invoice</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../invoice/invoiceAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Invoice</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
             <!--end::Sidebar Menu-->
@@ -384,8 +463,8 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Detail Invoice</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item"><a href="invoice.php">Invoice</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Detail Invoice</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
@@ -405,8 +484,8 @@ include '../../connect.php';
                 <div class="card mb-4">
                   <div class="card-header">
                     <h3 class="card-title">
-                      <button type="button" name="id" onclick="window.location.href='printDetailInvoice.php?id=<?= $row['ID'] ?>'" class="btn btn-primary mb-2">Print</button>
-                      <button type="submit" name="id" onclick="window.location.href='exportDetailInvoiceCSV.php?id=<?= $row['ID'] ?>'" class="btn btn-primary mb-2">Export CSV</button>
+                      <button type="button" name="id" onclick="window.location.href='printDetailInvoice.php?id=<?= $row['ID_DETAIL'] ?>'" class="btn btn-primary bi-printer"> Print</button>
+                      <button type="submit" name="id" onclick="window.location.href='exportDetailInvoiceCSV.php?id=<?= $row['ID_DETAIL'] ?>'" class="btn btn-primary bi-file-earmark-text"> Export CSV</button>
                     </h3>
                   </div>
                   <!-- /.card-header -->
@@ -416,10 +495,9 @@ include '../../connect.php';
                         <tr>
                           <th style="width: 3%">ID</th>
                           <th style="width: 15%;">Nama Item</th>
-                          <th>Jumlah Item</th>
-                          <th>Harga Satuan</th>
-                          <th style="width: 10%">Total Harga</th>
-                          <th style="width: 30%;">Aksi</th>
+                          <th style="width: 10%;">Jumlah Item</th>
+                          <th style="width: 17%">Harga Satuan</th>
+                          <th style="width: 20%;">Total Harga</th>
                           <!-- <th style="width: 30%">Aksi</th> -->
                         </tr>
                       </thead>
@@ -427,35 +505,27 @@ include '../../connect.php';
                       <?php
                       // Fetch data from the database
                       $sql = "SELECT 
-                          inv.ID,
+                          inv.ID_DETAIL_ROW,
                           i.NAME AS itemName,
                           inv.QTY,
                           inv.UNIT_PRICE,
                           inv.TOTAL_PRICE
-                      FROM invoice inv
+                      FROM invoice_detail inv
                       JOIN item i ON inv.ITEM = i.ID
-                      WHERE inv.ID = '$id'";
-
+                      WHERE inv.ID_DETAIL = '$id'";
                       // Execute the query
                       $result = mysqli_query($conn, $sql);
+
                         // Check if there are results
                         if (mysqli_num_rows($result) > 0) {
                             // Loop through the results and display them in the table
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr class='align-middle'>";
-                                echo "<td>" . $row['ID'] . "</td>";
+                                echo "<td>" . $row['ID_DETAIL_ROW'] . "</td>";
                                 echo "<td>" . $row['itemName'] . "</td>";
                                 echo "<td>" . $row['QTY'] . "</td>";
                                 echo "<td>Rp" . number_format($row['UNIT_PRICE'], 0, ',', '.') . "</td>";
                                 echo "<td>Rp" . number_format($row['TOTAL_PRICE'], 0, ',', '.') . "</td>";
-                                echo "<td class='no-print'>
-                                      <form action='editInvoice.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='id' value='" . $row['ID'] . "' class='btn btn-primary mb-2'>Edit</button>
-                                      </form>
-                                      <form action='../../function/invoice/deleteInvoice.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='id' value='" . $row['ID'] . "' class='btn btn-danger mb-2'>Delete</button>
-                                      </form>
-                                     </td>";
                                 echo "</tr>";
                             }
                         } else {

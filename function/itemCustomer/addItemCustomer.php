@@ -26,7 +26,7 @@
         $itemName = $rowItem['NAME'];
 
         // INSERT DATA TANPA ref_no DULU
-        $insert = "INSERT INTO itemCustomer (customer, item, price) VALUES ('$nameID', '$itemID', '$price')";
+        $insert = "INSERT INTO itemCustomer (CUSTOMER, ITEM, PRICE) VALUES ('$nameID', '$itemID', '$price')";
         $conn->query($insert);
 
         // GET ID YANG BARU DIBUAT
@@ -39,7 +39,7 @@
         $ref_no = $initialKustomer . $initialItem . $nomorFormatted;
 
         // UPDATE ref_no BERDASARKAN ID YANG BARU
-        $update = "UPDATE itemCustomer SET ref_no = '$ref_no' WHERE ID = '$newID'";
+        $update = "UPDATE itemCustomer SET REF_NO = '$ref_no' WHERE ID = '$newID'";
         $conn->query($update);
 
         // REDIRECT / FEEDBACK

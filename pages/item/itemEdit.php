@@ -18,7 +18,7 @@ include '../../connect.php';
 
     } else {
         echo "Customer tidak ditemukan.";
-        echo "<script>window.location.href='customer.php';</script>";
+        echo "<script>window.location.href='item.php';</script>";
         exit;
     }
 ?>
@@ -375,55 +375,39 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Edit Item</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item"><a href="item.php">Item</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit Item</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
+            <!-- begin::notifikasi berhasil / gagal -->
+            <?php if (isset($_GET['status'])): ?>
+              <?php if ($_GET['status'] == 'dipakai'): ?>
+                  <div class="alert alert-danger" role="alert">
+                      <b>ERROR NOTE: </b> Gagal mengubah data. Data sedang digunakan.
+                  </div>
+              <?php elseif ($_GET['status'] == 'berhasil'): ?>
+                  <div class="alert alert-success" role="alert">
+                      Data berhasil dihapus.
+                  </div>
+              <?php elseif ($_GET['status'] == 'error'): ?>
+                  <div class="alert alert-warning" role="alert">
+                      Terjadi kesalahan saat menghapus data.
+                  </div>
+              <?php elseif ($_GET['status'] == 'invalid'): ?>
+                  <div class="alert alert-warning" role="alert">
+                      ID tidak ditemukan.
+                  </div>
+              <?php endif; ?>
+              <script>
+                  // Setelah alert ditampilkan, redirect ke halaman yang sama tanpa query string
+                  window.history.replaceState(null, null, window.location.pathname);
+              </script>
+          <?php endif; ?>
+          <!-- end::notifikasi berhasil / gagal -->
           </div> <!--end::Container-->
         </div>
         <!--end::App Content Header-->
-
-        <!-- TABEL DATA ITEM SAAT INI -->
-        <!--begin::App Content-->
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="px-5">
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">Data Item</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%">#</th>
-                          <th>Nama Item</th>
-                          <th style="width: 35%;">Harga</th>
-                          <th style="width: 15%">Nomor Referal</th>
-                          <th style="width: 14%">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class='align-middle'>
-                          <td><?= $row['ID'] ?></td>
-                          <td><?= $row['NAME'] ?></td>
-                          <td class="px-4 py-2">RP<?= number_format($row['PRICE'], 0, ',', '.') ?></td>
-                          <td><div><div style='width: 50%'><?= $row['REF_NO'] ?></div></div></td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-              </div> <!-- /.col -->
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
-        </div> <!--end::Container-->
 
         <!-- EDIT ITEM -->
         <!--begin::App Content-->
@@ -447,11 +431,15 @@ include '../../connect.php';
                     <div class="card-body">
                       <div class="mb-3">
                         <label for="name" class="form-label">Nama Item</label>
-                        <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira" class="form-control">
+                        <input type="text" id="nama" name="nama" value="<?= $row['NAME'] ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
                       </div>
                       <div class="mb-3">
                         <label for="name" class="form-label">Harga Item</label>
-                        <input type="number" id="harga" name="harga" placeholder="Contoh: 15000" class="form-control">
+                        <input type="number" id="harga" name="harga" value="<?= $row['PRICE'] ?>" placeholder="Contoh: 15000" class="form-control">
+                      </div>
+                      <div class="mb-3">
+                        <label for="kode" class="form-label">Kode Item</label>
+                        <input type="text" id="kode" name="kode" value="<?= $ref_no ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
                       </div>
                     </div>
                     <!--end::Body-->

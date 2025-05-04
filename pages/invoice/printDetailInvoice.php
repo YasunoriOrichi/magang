@@ -67,7 +67,7 @@ $invoiceID = $row['INVOICE_NO'];
 <body>
 
     <!-- Informasi Kustomer dan Invoice -->
-    <h1>Detail Invoice</h1>
+    <h1>Invoice</h1>
 
 
     <div class="invoice-details">

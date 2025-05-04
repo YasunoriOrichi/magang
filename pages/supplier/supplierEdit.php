@@ -374,57 +374,14 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Supplier</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item"><a href="supplier.php">Supplier</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit Supplier</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
           </div> <!--end::Container-->
         </div>
         <!--end::App Content Header-->
-
-        <!-- TABEL DATA SUPPLIER SAAT INI-->
-        <!--begin::App Content-->
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="px-5">
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">Data Supplier Saat Ini</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%">#</th>
-                          <th >Nama Supplier</th>
-                          <th style="width: 15%">Nomor Referal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle">
-                          <td><?= $row['ID'] ?></td>
-                          <td><?= $row['NAME'] ?></td>
-                          <td>
-                            <div>
-                              <div style='width: 50%'><?= $row['REF_NO'] ?>
-                            </div>
-                          </div>
-                        </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-              </div> <!-- /.col -->
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
-        </div> <!--end::Container-->
 
         <!-- EDIT SUPPLIER -->
         <!--begin::App Content-->
@@ -448,7 +405,11 @@ include '../../connect.php';
                     <div class="card-body">
                       <div class="mb-3">
                         <label for="name" class="form-label">Nama Supplier</label>
-                        <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira" class="form-control">
+                        <input type="text" id="nama" name="nama" value="<?= $nama ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
+                      </div>
+                      <div class="mb-3">
+                        <label for="kode" class="form-label">Kode Supplier</label>
+                        <input type="text" id="kode" name="kode" value="<?= $ref_no ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
                       </div>
                     </div>
                     <!--end::Body-->

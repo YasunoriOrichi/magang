@@ -1,8 +1,8 @@
 <?php
 // Include the database connection file
 include '../../connect.php';
-    // Ambil ID customer dari URL
-    $id = $_GET['id'];
+$id = $_GET['id'];
+
     // Query untuk mengambil data customer berdasarkan ID
     $sql = "SELECT 
             inv.ID,
@@ -18,6 +18,21 @@ include '../../connect.php';
             WHERE inv.ID = '$id'";
     $result = $conn->query($sql);
 
+    $sql2 = "SELECT CUSTOMER FROM invoice WHERE ID = '$id'";
+    $result2 = $conn->query($sql2);
+    $row2 = $result2->fetch_assoc();
+
+    $customer_id = $row2['CUSTOMER'];
+
+    $sql3 = "SELECT ITEM FROM invoice WHERE ID = '$id'";
+    $result3 = $conn->query($sql3);
+    $row3 = $result3->fetch_assoc();
+
+    $item_id = $row3['ITEM'];
+
+    var_dump($customer_id);
+    var_dump($item_id);
+
     // Cek apakah data ditemukan
     if ($result->num_rows > 0) {
         // Ambil data customer
@@ -29,9 +44,8 @@ include '../../connect.php';
         $qty = $row['QTY'];  // Jumlah item yang akan ditampilkan di form
         $total_price = $row['TOTAL_PRICE'];  // Total harga item yang akan ditampilkan di form
         $invoice_no = $row['INVOICE_NO'];  // Nomor referensi customer yang akan ditampilkan di form
-
     } else {
-        echo "<script>window.location.href='itemCustomer.php';</script>";
+        echo "<script>window.location.href='ivnocie.php';</script>";
         exit;
     }
 ?>
@@ -388,8 +402,8 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Edit Invoice</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item"><a href="#">Invoice</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit Invoice</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
@@ -397,58 +411,7 @@ include '../../connect.php';
         </div>
         <!--end::App Content Header-->
 
-        <!-- TABEL DATA ITEM KUSTOMER SAAT INI-->
-        <!--begin::App Content-->
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="px-5">
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">Data Invoice Saat Ini</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%">#</th>
-                          <th >Nama Kustomer</th>
-                          <th style="width: 25%">Nama Item</th>
-                          <th style="width: 13%">Harga</th>
-                          <th style="width: 7%">QTY</th>
-                          <th style="width: 13%">Total Harga</th>
-                          <th style="width: 15%">Nomor Referal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle">
-                          <td><?= $row['ID'] ?></td>
-                          <td><?= $row['customerName'] ?></td>
-                          <td><?= $row['itemName'] ?></td>
-                          <td><?= "Rp" . number_format($row['UNIT_PRICE'], 0, ',', '.') ?></td>
-                          <td><?= $row['QTY'] ?></td>
-                          <td><?= "Rp" . number_format($row['TOTAL_PRICE'], 0, ',', '.') ?></td>
-                          <td>
-                            <div>
-                              <div style='width: 50%'><?= $row['INVOICE_NO'] ?>
-                            </div>
-                          </div>
-                        </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-              </div> <!-- /.col -->
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
-        </div> <!--end::Container-->
-
-        <!-- EDIT ITEM KUSTOMER -->
+        <!-- EDIT INVOICE -->
         <!--begin::App Content-->
         <div class="container-fluid">
             <!--begin::Row-->
@@ -471,26 +434,23 @@ include '../../connect.php';
                       <div class="mb-3">
                         <label for="customer" class="form-label">Nama Kustomer</label>
                         <select class="form-select" id="kustomer" name="kustomer" required="">
-                          <option selected="" disabled="" value="">Pilih nama kustomer</option>
-                          <option>
-                          <?php
+                        <?php
                             $query = mysqli_query($conn, "SELECT * FROM customer");
                             while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
+                              $selected = ($data['ID'] == $customer_id) ? 'selected' : '';
+                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
                             }
                           ?>
-                          </option>
                         </select>
                       </div>
                       <div class="mb-3">
                         <label for="item" class="form-label">Nama Item</label>
                         <select class="form-select" id="item" name="item" required="">
-                          <option selected="" disabled="" value="">Pilih nama item</option>
-                          <option>
-                          <?php
+                        <?php
                             $query = mysqli_query($conn, "SELECT * FROM item");
                             while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
+                              $selected = ($data['ID'] == $item_id) ? 'selected' : '';
+                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
                             }
                           ?>
                           </option>
@@ -498,11 +458,15 @@ include '../../connect.php';
                       </div>
                       <div class="mb-3">
                         <label for="jumlah" class="form-label">Jumlah Item</label>
-                        <input type="number" id="jumlah" name="jumlah" placeholder="Contoh: 10" class="form-control">
+                        <input type="number" id="jumlah" name="jumlah" value="<?= $row['QTY'] ?>" placeholder="Contoh: 10" class="form-control" required="">
                       </div>
                       <div class="mb-3">
-                        <label for="harga" class="form-label">Harga Item</label>
-                        <input type="number" id="harga" name="harga" placeholder="Contoh: 15000" class="form-control">
+                        <label for="harga" class="form-label">Harga Item (Opsional)</label>
+                        <input type="number" id="harga" name="harga" value="<?= $row['UNIT_PRICE'] ?>" placeholder="Kosongkan untuk harga default" class="form-control">
+                      </div>
+                      <div class="mb-3">
+                        <label for="kode" class="form-label">Kode Invoice</label>
+                        <input type="text" id="kode" name="kode" value="<?= $invoice_no ?>" placeholder="Contoh: HN070109001" class="form-control">
                       </div>
                     </div>
                     <!--end::Body-->

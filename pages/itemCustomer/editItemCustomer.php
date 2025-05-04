@@ -25,11 +25,18 @@ include '../../connect.php';
         $item = $row['itemName'];  // Nama item yang akan ditampilkan di form
         $price = $row['PRICE'];  // Harga item yang akan ditampilkan di form
         $ref_no = $row['REF_NO'];  // Nomor referensi customer yang akan ditampilkan di form
-
     } else {
         echo "<script>window.location.href='itemCustomer.php';</script>";
         exit;
     }
+
+    $sql2 = "SELECT ITEM FROM itemcustomer WHERE ID = '$id'";
+    $result2 = $conn->query($sql2);
+    $row2 = $result2->fetch_assoc();
+
+    $item_id = $row2['ITEM'];
+
+    
 ?>
 
 <!doctype html>
@@ -384,61 +391,14 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Kustomer</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item"><a href="itemCustomer.php">Item Customer</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Edit Item Customer</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
           </div> <!--end::Container-->
         </div>
         <!--end::App Content Header-->
-
-        <!-- TABEL DATA ITEM KUSTOMER SAAT INI-->
-        <!--begin::App Content-->
-        <div class="app-content">
-          <!--begin::Container-->
-          <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row">
-              <div class="px-5">
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <h3 class="card-title">Data Kustomer Saat Ini</h3>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body p-0">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 5%">#</th>
-                          <th >Nama Kustomer</th>
-                          <th style="width: 30%">Nama Item</th>
-                          <th style="width: 25%">Harga</th>
-                          <th style="width: 15%">Nomor Referal</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr class="align-middle">
-                          <td><?= $row['ID'] ?></td>
-                          <td><?= $row['customerName'] ?></td>
-                          <td><?= $row['itemName'] ?></td>
-                          <td>Rp<?= number_format($row['PRICE'], 0, ',', '.') ?></td>
-                          <td>
-                            <div>
-                              <div style='width: 50%'><?= $row['REF_NO'] ?>
-                            </div>
-                          </div>
-                        </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div> <!-- /.card-body -->
-                </div> <!-- /.card -->
-              </div> <!-- /.col -->
-            </div> <!--end::Row-->
-          </div> <!--end::Container-->
-        </div> <!--end::Container-->
 
         <!-- EDIT ITEM KUSTOMER -->
         <!--begin::App Content-->
@@ -454,7 +414,7 @@ include '../../connect.php';
                 <!--begin::Quick Example-->
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Tambah Item Kustomer</div></div>
+                  <div class="card-header"><div class="card-title">Edit Item Kustomer</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
                   <form action="../../function/itemCustomer/updateItemCustomer.php" method="POST">
@@ -462,35 +422,35 @@ include '../../connect.php';
                     <div class="card-body">
                       <div class="mb-3">
                         <label for="customer" class="form-label">Nama Kustomer</label>
-                        <select class="form-select" id="kustomer" name="kustomer" required="">
-                          <option selected="" disabled="" value="">Pilih nama kustomer...</option>
-                          <option>
+                        <select class="form-select" id="kustomer" name="kustomer" required>
                           <?php
                             $query = mysqli_query($conn, "SELECT * FROM customer");
                             while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
+                              $selected = ($data['ID'] == $id) ? 'selected' : '';
+                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
                             }
                           ?>
-                          </option>
                         </select>
                       </div>
                       <div class="mb-3">
                         <label for="item" class="form-label">Nama Item</label>
                         <select class="form-select" id="item" name="item" required="">
-                          <option selected="" disabled="" value="">Pilih nama item...</option>
-                          <option>
-                          <?php
+                        <?php
                             $query = mysqli_query($conn, "SELECT * FROM item");
                             while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
+                              $selected = ($data['ID'] == $item_id) ? 'selected' : '';
+                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
                             }
                           ?>
-                          </option>
                         </select>
                       </div>
                       <div class="mb-3">
                         <label for="name" class="form-label">Harga Item</label>
-                        <input type="number" id="harga" name="harga" placeholder="Contoh: 15000" class="form-control">
+                        <input type="number" id="harga" name="harga" value="<?= $price ?>" placeholder="Contoh: 15000" class="form-control">
+                      </div>
+                      <div class="mb-3">
+                        <label for="kode" class="form-label">Kode Item Kustomer</label>
+                        <input type="text" id="kode" name="kode" value="<?= $ref_no ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
                       </div>
                     </div>
                     <!--end::Body-->

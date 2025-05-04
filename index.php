@@ -1,7 +1,7 @@
 <?php
-require_once 'env.php';
-// echo getBaseUrl(); 
 include 'connect.php';
+// require_once 'env.php';
+// echo getBaseUrl(); 
 ?>
 
 <!DOCTYPE html>

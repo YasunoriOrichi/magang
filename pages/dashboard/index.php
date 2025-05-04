@@ -32,7 +32,7 @@ $totalInvoice = $invoiceData['total'];
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE 4 | Sidebar Mini</title>
+    <title>Dashboard | Home</title>
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
@@ -315,47 +315,124 @@ $totalInvoice = $invoiceData['total'];
                 </a>
               </li>
               <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
+              <li class="nav-item  ">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ui-checks-grid"></i>
                   <p>
                     Item
                   </p>
-                </a>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
+                  </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item  ">
+                    <a href="../item/item.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../item/itemAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- CUSTOMER -->
               <li class="nav-item">
-                <a href="../customer/customer.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Customer
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../customer/customer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../customer/customerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- SUPPLIER -->
               <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
                     Supplier
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../supplier/supplier.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Supplier</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../supplier/supplierAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Supplier</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- ITEM CUSTOMER -->
               <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Item Customer
+                  </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- INVOICE -->
               <li class="nav-item">
-                <a href="../invoice/invoice.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-filetype-js"></i>
                   <p>
                     Invoice
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../invoice/invoice.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Invoice</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../invoice/invoiceAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Invoice</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
             <!--end::Sidebar Menu-->
@@ -379,8 +456,7 @@ $totalInvoice = $invoiceData['total'];
               <div class="col-sm-6"><h3 class="mb-0">Dashboard</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
                 </ol>
               </div>
             </div> <!--end::Row-->

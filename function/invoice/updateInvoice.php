@@ -13,12 +13,13 @@
         } else {
             $unit_price = $_POST['harga'];
         }
+        $invoice_no = $_POST['kode'];
 
         // TOTAL HARGA
         $total_price = $qty * $unit_price;
 
         // Prepare and bind
-        $query = "UPDATE invoice SET CUSTOMER='$customerID', ITEM='$itemID', QTY='$qty', UNIT_PRICE='$unit_price', TOTAL_PRICE='$total_price' WHERE ID='$id'";
+        $query = "UPDATE invoice SET INVOICE_NO='$invoice_no', CUSTOMER='$customerID', ITEM='$itemID', QTY='$qty', UNIT_PRICE='$unit_price', TOTAL_PRICE='$total_price' WHERE ID='$id'";
 
         // Execute the statement
         if (mysqli_query($conn, $query)) {

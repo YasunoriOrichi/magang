@@ -1,5 +1,19 @@
 <?php
 include '../../connect.php';
+
+$keyword = $_GET['search'] ?? '';
+$reset = $_GET['reset'] ?? '';
+
+if ($reset) {
+  $keyword = '';
+}
+
+$query = "SELECT * FROM customer";
+if ($keyword !== '') {
+  $safeKeyword = mysqli_real_escape_string($conn, $keyword);
+  $query .= " WHERE NAME LIKE '%$safeKeyword%'";
+}
+$result = mysqli_query($conn, $query);
 ?>
 
 <!doctype html>
@@ -290,47 +304,124 @@ include '../../connect.php';
                 </a>
               </li>
               <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
+              <li class="nav-item  ">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ui-checks-grid"></i>
                   <p>
                     Item
                   </p>
-                </a>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
+                  </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item  ">
+                    <a href="../item/item.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../item/itemAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- CUSTOMER -->
               <li class="nav-item menu-open">
-                <a href="../customer/customer.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Customer
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-open">
+                    <a href="../customer/customer.php" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../customer/customerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- SUPPLIER -->
               <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
                     Supplier
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../supplier/supplier.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Supplier</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../supplier/supplierAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Supplier</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- ITEM CUSTOMER -->
               <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Item Customer
+                  </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- INVOICE -->
               <li class="nav-item">
-                <a href="../invoice/invoice.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-filetype-js"></i>
                   <p>
                     Invoice
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../invoice/invoice.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Invoice</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../invoice/invoiceAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Invoice</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
             <!--end::Sidebar Menu-->
@@ -354,8 +445,7 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Kustomer</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item active" aria-current="page">Customer</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
@@ -388,42 +478,6 @@ include '../../connect.php';
         </div>
         <!--end::App Content Header-->
 
-        <!-- TAMBAH KUSTOMER -->
-        <!--begin::App Content-->
-        <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-0">
-              <!--begin::Col-->
-              <div class="col-12">
-              </div>
-              <!--end::Col-->
-              <!--begin::Col-->
-              <div class="px-5">
-                <!--begin::Quick Example-->
-                <div class="card card-primary card-outline mb-4">
-                  <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Tambah Kustomer</div></div>
-                  <!--end::Header-->
-                  <!--begin::Form-->
-                  <form action="../../function/customer/addCustomer.php" method="POST" class="">
-                    <!--begin::Body-->
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Nama Kustomer</label>
-                        <input type="text" id="nama" name="nama" placeholder="Contoh: Dwi Yudhistira" class="form-control">
-                      </div>
-                    </div>
-                    <!--end::Body-->
-                    <!--begin::Footer-->
-                    <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Submit</button>
-                    </div> <!--end::Footer-->
-                  </form> <!--end::Form-->
-                </div> <!--end::Quick Example-->
-              </div> <!--end::Col-->
-            </div> <!--end::Row-->
-        </div> <!--end::Container-->
-
         <!-- TABEL DATA -->
         <!--begin::App Content-->
         <div class="app-content">
@@ -432,10 +486,40 @@ include '../../connect.php';
             <!--begin::Row-->
             <div class="row">
               <div class="px-5">
+                <!-- PENCARIAN -->
+                <!--begin::Quick Example-->
+                <div class="card card-primary card-outline mb-4">
+                  <!--begin::Form-->
+                  <form method="GET">
+                    <!--begin::Body-->
+                    <div class="card-body">
+                    <label for="exampleInputEmail1" class="form-label">Pencarian</label>
+                    <div class="row">
+                      <div class="col-10 mb-3">
+                        <input
+                          type="search"
+                          name="search"
+                          class="form-control"
+                          id="search"
+                          value="<?= htmlspecialchars($keyword) ?>"
+                          placeholder="Masukkan Nama Item..."/>
+                      </div>
+                      <div class="col-1">
+                        <button type="submit" class="btn btn-warning mb-3"> Search</button>
+                        </div><div class="col-1">
+                        <button type="submit" name="reset" value="1" class="btn btn-secondary mb-2 "> Reset</button>
+                      </div>
+                    </div>
+                    </div>
+                    <!--end::Body-->
+                  </form>
+                  <!--end::Form-->
+                </div>
+                <!--end::Quick Example-->
                 <!-- /.card -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <h3 class="card-title">Data Kustomer</h3>
+                  <button type="button" name="id" onclick="window.location.href='customerAdd.php'" class="btn btn-primary bi-plus-lg"> Tambah</button>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body p-0">
@@ -443,31 +527,27 @@ include '../../connect.php';
                       <thead>
                         <tr>
                           <th style="width: 5%">#</th>
-                          <th >Nama Kustomer</th>
-                          <th style="width: 15%">Nomor Referal</th>
+                          <th style="width: 15%">Kode Kustomer</th>
+                          <th>Nama Kustomer</th>
                           <th style="width: 14%">Aksi</th>
                         </tr>
                       </thead>
                       <tbody>
                       <?php
-                        // Fetch data from the database
-                        $query = "SELECT * FROM customer";
-                        $result = mysqli_query($conn, $query);
-
                         // Check if there are results
                         if (mysqli_num_rows($result) > 0) {
                             // Loop through the results and display them in the table
                             while ($row = mysqli_fetch_assoc($result)) {
                                 echo "<tr class='align-middle'>";
                                 echo "<td>" . $row['ID'] . "</td>";
-                                echo "<td>" . $row['NAME'] . "</td>";
                                 echo "<td><div><div style='width: 50%'>" . $row['REF_NO'] . "</div></div></td>";
+                                echo "<td>" . $row['NAME'] . "</td>";
                                 echo "<td>
                                       <form action='customerEdit.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='ID' value='" . $row['ID'] . "' class='btn btn-primary mb-2'>Edit</button>
+                                      <button type='submit' name='ID' value='" . $row['ID'] . "' class='btn btn-primary bi-pencil'></button>
                                       </form>
                                       <form action='../../function/customer/deleteCustomer.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='ID' value='" . $row['ID'] . "' class='btn btn-danger mb-2'>Delete</button>
+                                      <button type='submit' onclick=\"return confirm('Apakah kamu yakin ingin menghapus data ini?')\" name='ID' value='" . $row['ID'] . "' class='btn btn-danger bi-trash'></button>
                                       </form>
                                      </td>";
                                 echo "</tr>";

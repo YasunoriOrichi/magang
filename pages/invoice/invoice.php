@@ -1,5 +1,53 @@
 <?php
 include '../../connect.php';
+
+// Ambil data filter dari GET
+$keyword   = $_GET['keyword']   ?? '';
+$customer  = $_GET['customer']  ?? '';
+$tgl_dari  = $_GET['tgl_dari']  ?? '';
+$tgl_ke    = $_GET['tgl_ke']    ?? '';
+$reset     = isset($_GET['reset']);
+
+// Reset: kosongkan semua
+if ($reset) {
+    $keyword = '';
+    $customer = '';
+    $tgl_dari = '';
+    $tgl_ke = '';
+}
+
+// Ambil daftar customer untuk selectbox
+$customers = mysqli_query($conn, "SELECT * FROM customer");
+
+// Bangun query invoice
+$query = "SELECT invoice.*, customer.NAME AS customerName
+          FROM invoice 
+          LEFT JOIN customer ON invoice.CUSTOMER = customer.ID 
+          WHERE 1=1";
+
+if ($keyword !== '') {
+    $safeKeyword = mysqli_real_escape_string($conn, $keyword);
+    $query .= " AND invoice.INVOICE_NO LIKE '%$safeKeyword%'";
+}
+
+if ($customer !== '') {
+    $safeCustomer = (int)$customer;
+    $query .= " AND customer.ID = $safeCustomer";
+}
+
+if ($tgl_dari !== '') {
+    $safeDari = mysqli_real_escape_string($conn, $tgl_dari);
+    $query .= " AND DATE_INVOICE >= '$safeDari'";
+}
+
+if ($tgl_ke !== '') {
+    $safeKe = mysqli_real_escape_string($conn, $tgl_ke);
+    $query .= " AND DATE_INVOICE <= '$safeKe'";
+}
+
+$query .= " ORDER BY DATE_INVOICE DESC";
+
+$result = mysqli_query($conn, $query);
 ?>
 
 <!doctype html>
@@ -290,47 +338,124 @@ include '../../connect.php';
                 </a>
               </li>
               <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
+              <li class="nav-item  ">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-ui-checks-grid"></i>
                   <p>
                     Item
                   </p>
-                </a>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
+                  </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item  ">
+                    <a href="../item/item.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../item/itemAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- CUSTOMER -->
               <li class="nav-item">
-                <a href="../customer/customer.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-clipboard-fill"></i>
                   <p>
                     Customer
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../customer/customer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../customer/customerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- SUPPLIER -->
               <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-box-seam-fill"></i>
+                  <p>
                     Supplier
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../supplier/supplier.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Supplier</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../supplier/supplierAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Supplier</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- ITEM CUSTOMER -->
               <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
+                <a href="#" class="nav-link">
+                  <i class="nav-icon bi bi-pencil-square"></i>
+                  <p>
+                    Item Customer
+                  </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomer.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Item Kustomer</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../itemCustomer/itemCustomerAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Item Kustomer</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
               <!-- INVOICE -->
               <li class="nav-item menu-open">
-                <a href="../invoice/invoice.php" class="nav-link">
+                <a href="#" class="nav-link">
                   <i class="nav-icon bi bi-filetype-js"></i>
                   <p>
                     Invoice
                   </p>
+                  <i class="nav-arrow bi bi-chevron-right"></i>
                 </a>
+                <ul class="nav nav-treeview">
+                  <li class="nav-item menu-open">
+                    <a href="../invoice/invoice.php" class="nav-link active">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Daftar Invoice</p>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a href="../invoice/invoiceAdd.php" class="nav-link">
+                      <i class="nav-icon bi bi-circle"></i>
+                      <p>Tambah Invoice</p>
+                    </a>
+                  </li>
+                </ul>
               </li>
             </ul>
             <!--end::Sidebar Menu-->
@@ -354,82 +479,13 @@ include '../../connect.php';
               <div class="col-sm-6"><h3 class="mb-0">Invoice</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="#">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Small Box</li>
+                  <li class="breadcrumb-item active">Invoice</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
           </div> <!--end::Container-->
         </div>
         <!--end::App Content Header-->
-
-        <!-- TAMBAH INVOICE -->
-        <!--begin::App Content-->
-        <div class="container-fluid">
-            <!--begin::Row-->
-            <div class="row g-0">
-              <!--begin::Col-->
-              <div class="col-12">
-              </div>
-              <!--end::Col-->
-              <!--begin::Col-->
-              <div class="px-5">
-                <!--begin::Quick Example-->
-                <div class="card card-primary card-outline mb-4">
-                  <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Tambah Invoice</div></div>
-                  <!--end::Header-->
-                  <!--begin::Form-->
-                  <form action="../../function/invoice/addInvoice.php" method="POST">
-                    <!--begin::Body-->
-                    <div class="card-body">
-                      <div class="mb-3">
-                        <label for="customer" class="form-label">Nama Kustomer</label>
-                        <select class="form-select" id="kustomer" name="kustomer" required="">
-                          <option selected="" disabled="" value="">Pilih nama kustomer</option>
-                          <option>
-                          <?php
-                            $query = mysqli_query($conn, "SELECT * FROM customer");
-                            while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
-                            }
-                          ?>
-                          </option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="item" class="form-label">Nama Item</label>
-                        <select class="form-select" id="item" name="item" required="">
-                          <option selected="" disabled="" value="">Pilih nama item</option>
-                          <option>
-                          <?php
-                            $query = mysqli_query($conn, "SELECT * FROM item");
-                            while ($data = mysqli_fetch_assoc($query)) {
-                                echo "<option value='".$data['ID']."'>".$data['NAME']."</option>";
-                            }
-                          ?>
-                          </option>
-                        </select>
-                      </div>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Jumlah Item</label>
-                        <input type="number" id="jumlah" name="jumlah" placeholder="Contoh: 10" class="form-control">
-                      </div>
-                      <div class="mb-3">
-                        <label for="name" class="form-label">Harga Item (Opsional)</label>
-                        <input type="number" id="harga" name="harga" placeholder="Kosongkan untuk harga default" class="form-control">
-                      </div>
-                    </div>
-                    <!--end::Body-->
-                    <!--begin::Footer-->
-                    <div class="card-footer">
-                      <button type="submit" class="btn btn-primary">Submit</button>
-                    </div> <!--end::Footer-->
-                  </form> <!--end::Form-->
-                </div> <!--end::Quick Example-->
-              </div> <!--end::Col-->
-            </div> <!--end::Row-->
-        </div> <!--end::Container-->
 
         <!-- TABEL DATA -->
         <!--begin::App Content-->
@@ -439,12 +495,68 @@ include '../../connect.php';
             <!--begin::Row-->
             <div class="row">
               <div class="px-5">
+
+                <!-- PENCARIAN -->
+                <!--begin::Quick Example-->
+                <div class="card card-primary card-outline mb-4">
+                  <!--begin::Form-->
+                  <form method="GET">
+                    <!--begin::Body-->
+                    <div class="card-body">
+                      <div class="row">
+                      <div class="col-3">
+                        <label for="exampleInputEmail1" class="form-label">Kode</label>
+                        <input
+                          type="search"
+                          name="keyword"
+                          class="form-control"
+                          id="search"
+                          value="<?= htmlspecialchars($keyword) ?>"
+                          placeholder="Masukkan Nama Kustomer..."/>
+                      </div>
+                      <div class="col-3">
+                        <label for="exampleInputEmail1" class="form-label">Nama Kustomer</label>
+                        <select name="customer" class="form-select">
+                          <option value="" <?= $customer == '' ? 'selected' : '' ?> hidden>Pilih Kustomer</option>
+                          <?php
+                          while ($row = mysqli_fetch_assoc($customers)) {
+                              $selected = ($customer == $row['ID']) ? 'selected' : '';
+                              echo "<option value='" . $row['ID'] . "' $selected>" . htmlspecialchars($row['NAME']) . "</option>";
+                          }
+                          ?>
+                          </select>
+                      </div>
+                      <div class="col-2">
+                        <label for="" class="form-label">Dari Tanggal</label>
+                        <input type="date" class="form-control" name="tgl_dari" value="<?= htmlspecialchars($tgl_dari) ?>">
+                      </div>
+                      <div class="col-2">
+                        <label for="" class="form-label">Hingga Tanggal</label>
+                        <input type="date" class="form-control" name="tgl_ke" value="<?= htmlspecialchars($tgl_ke) ?>">
+                      </div>
+                      <div class="col-1 mb-2">
+                        <label for="" class="form-label" style="color: white;">Search</label>
+                        <button type="submit" class="btn btn-warning">Search</button>
+                        </div>
+                        <div class="col-1 mb-2">
+                          <label for="" class="mb-2" style="color: white;">reset</label>
+                        <button type="submit" name="reset" value="1" class="btn btn-secondary">Reset</button>
+                      </div>
+                      </div>
+                    </div>
+                    <!--end::Body-->
+                  </form>
+                  <!--end::Form-->
+                </div>
+                <!--end::Quick Example-->
+              
                 <!-- /.card -->
                 <div class="card mb-4">
                   <div class="card-header">
                     <h3 class="card-title">
-                    <button type="button" name="id" onclick="window.location.href='printInvoice.php'" class="btn btn-primary mb-2">Print</button>
-                    <button type="button" name="id" onclick="window.location.href='exportInvoiceCSV.php'" class="btn btn-primary mb-2">Export CSV</button>
+                    <button type="button" name="id" onclick="window.location.href='invoiceAdd.php'" class="btn btn-primary bi-plus-lg"> Tambah</button>
+                    <button type="button" name="id" onclick="window.location.href='printInvoice.php'" class="btn btn-primary bi-printer"> Print</button>
+                    <button type="button" name="id" onclick="window.location.href='exportInvoiceCSV.php'" class="btn btn-primary bi-file-earmark-text"> Export CSV</button>
                     </h3>
                   </div>
                   <!-- /.card-header -->
@@ -460,16 +572,6 @@ include '../../connect.php';
                       </thead>
                       <tbody>
                       <?php
-                      // Fetch data from the database
-                      $sql = "SELECT 
-                          inv.INVOICE_NO,
-                          c.NAME AS customerName,
-                          inv.DATE_INVOICE
-                      FROM invoice inv
-                      JOIN customer c ON inv.CUSTOMER = c.ID";
-                  
-                      $result = mysqli_query($conn, $sql);
-
                         // Check if there are results
                         if (mysqli_num_rows($result) > 0) {
                             // Loop through the results and display them in the table
@@ -480,13 +582,13 @@ include '../../connect.php';
                                 echo "<td>" . $row['DATE_INVOICE'] . "</td>";
                                 echo "<td>
                                       <form action='editInvoice.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='id' value='" . $row['INVOICE_NO'] . "' class='btn btn-primary mb-2'>Edit</button>
+                                      <button type='submit' name='id' value='" . $row['ID'] . "' class='btn btn-primary mb-2 bi-pencil'></button>
                                       </form>
                                       <form action='detailInvoice.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='id' value='" . $row['INVOICE_NO'] . "' class='btn btn-info mb-2'>Detail</button>
+                                      <button type='submit' name='id' value='" . $row['ID'] . "' class='btn btn-info mb-2 bi-info-lg'></button>
                                       </form>
                                       <form action='../../function/invoice/deleteInvoice.php' method='GET' style='display:inline-block; margin-right: 1px;'>
-                                      <button type='submit' name='id' value='" . $row['INVOICE_NO'] . "' class='btn btn-danger mb-2'>Delete</button>
+                                      <button type='submit' onclick=\"return confirm('Apakah kamu yakin ingin menghapus data ini?')\" name='id' value='" . $row['INVOICE_NO'] . "' class='btn btn-danger mb-2 bi-trash'></button>
                                       </form>
                                      </td>";
                                 echo "</tr>";
