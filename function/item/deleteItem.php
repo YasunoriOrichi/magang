@@ -17,9 +17,9 @@
 
         } catch (mysqli_sql_exception $e) {
             if (strpos($e->getMessage(), 'a foreign key constraint fails') !== false) {
-                header("Location: ../../pages/item/item.php?status=gagal");
+                header("Location: ../../pages/item/item.php?status=used");
             } else {
-                header("Location: ../../pages/item/item.php?status=error");
+                header("Location: ../../pages/item/item.php?status=error_delete");
             }
             exit;
         }

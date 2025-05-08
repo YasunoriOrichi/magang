@@ -13,13 +13,13 @@
             mysqli_query($conn, $query);
 
             // Kalau berhasil
-            header("Location: ../../pages/customer/customer.php?status=berhasil");
+            header("Location: ../../pages/customer/customer.php?status=deleted");
 
         } catch (mysqli_sql_exception $e) {
             if (strpos($e->getMessage(), 'a foreign key constraint fails') !== false) {
-                header("Location: ../../pages/customer/customer.php?status=gagal");
+                header("Location: ../../pages/customer/customer.php?status=used");
             } else {
-                header("Location: ../../pages/customer/customer.php?status=error");
+                header("Location: ../../pages/customer/customer.php?status=erro_delete");
             }
             exit;
         }

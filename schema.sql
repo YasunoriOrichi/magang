@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3360
--- Generation Time: May 03, 2025 at 07:48 AM
+-- Generation Time: May 08, 2025 at 09:09 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -42,7 +42,8 @@ INSERT INTO `customer` (`ID`, `REF_NO`, `NAME`) VALUES
 (13, 'M001', 'Miyabi'),
 (19, 'S001', 'Sutan Umar Al Arqom'),
 (24, 'N002', 'Nevil Nurseri'),
-(25, 'H001', 'Hasna Nabila Zalfa');
+(25, 'H001', 'Hasna Nabila Zalfa'),
+(27, 'V002', 'Vivian');
 
 -- --------------------------------------------------------
 
@@ -67,7 +68,10 @@ INSERT INTO `invoice` (`ID`, `INVOICE_NO`, `CUSTOMER`, `DATE_INVOICE`) VALUES
 (4, 'VR300425004', 10, '2025-04-30'),
 (5, 'NR230125005', 19, '2025-04-30'),
 (6, 'NR230125006', 13, '2025-04-30'),
-(34, 'HJ020525034', 25, '2025-05-02');
+(34, 'HJ020525050', 25, '2025-05-02'),
+(47, 'MR070525047', 13, '2025-05-07'),
+(48, 'LR070525048', 10, '2025-05-07'),
+(51, 'SK080525055', 24, '2023-12-20');
 
 -- --------------------------------------------------------
 
@@ -94,26 +98,17 @@ INSERT INTO `invoice_detail` (`ITEM`, `QTY`, `UNIT_PRICE`, `TOTAL_PRICE`, `ID_DE
 (9, 13, 16000, 208000, 4, 3),
 (9, 2, 14000, 28000, 5, 4),
 (9, 5, 12000, 60000, 6, 5),
-(9, 12, 10000, 120000, 8, 6),
-(9, 3, 10000, 30000, 9, 7),
-(14, 2, 10000, 2, 24, 8),
-(16, 5, 8000, 40, 25, 9),
-(16, 5, 8000, 40, 26, 10),
-(16, 2, 8000, 16, 27, 11),
-(16, 5, 8000, 40, 28, 12),
-(16, 5, 8000, 40000, 29, 13),
-(16, 2, 8000, 16000, 30, 14),
-(16, 2, 8000, 16000, 31, 15),
-(16, 2, 8000, 16000, 32, 16),
-(9, 2, 10000, 20000, 32, 17),
-(14, 10, 2000, 20000, 33, 18),
-(11, 2, 81000, 162000, 33, 19),
-(16, 3, 8000, 24000, 33, 20),
 (16, 3, 8000, 24000, 34, 21),
 (9, 10, 10000, 100000, 34, 22),
 (15, 13, 7000, 91000, 34, 23),
 (14, 17, 2000, 34000, 34, 24),
-(11, 1, 81000, 81000, 34, 25);
+(11, 1, 81000, 81000, 34, 25),
+(9, 1, 10000, 10000, 48, 44),
+(18, 2, 10000, 20000, 48, 45),
+(14, 3, 2000, 6000, 51, 50),
+(16, 2, 8000, 16000, 51, 51),
+(14, 1, 2000, 2000, 47, 56),
+(16, 1, 8000, 8000, 47, 57);
 
 -- --------------------------------------------------------
 
@@ -137,7 +132,8 @@ INSERT INTO `item` (`ID`, `REF_NO`, `NAME`, `PRICE`) VALUES
 (11, 'P002', 'Polychrome', 81000),
 (14, 'D001', 'Donat', 2000),
 (15, 'L001', 'Lolipop', 7000),
-(16, 'E001', 'Es Krim Matcha', 8000);
+(16, 'E001', 'Es Krim Matcha', 8000),
+(18, 'B001', 'Bakwan', 10000);
 
 -- --------------------------------------------------------
 
@@ -159,7 +155,11 @@ CREATE TABLE `itemcustomer` (
 
 INSERT INTO `itemcustomer` (`ID`, `REF_NO`, `CUSTOMER`, `ITEM`, `PRICE`) VALUES
 (6, 'VP195', 13, 9, 15000),
-(9, 'SP009', 10, 9, 10000);
+(9, 'SP009', 10, 9, 10000),
+(22, 'VE022', 27, 16, 8000),
+(23, 'HE023', 25, 16, 8000),
+(24, 'NE024', 24, 16, 8000),
+(25, 'MM025', 13, 9, 10000);
 
 -- --------------------------------------------------------
 
@@ -178,8 +178,13 @@ CREATE TABLE `supplier` (
 --
 
 INSERT INTO `supplier` (`ID`, `REF_NO`, `NAME`) VALUES
-(3, 'Y001', 'Yudhistira'),
-(4, 'S001', 'Sutan Umar Al Arqom');
+(3, 'Y195', 'Yudhistira'),
+(4, 'S001', 'Sutan Umar Al Arqom'),
+(7, 'H001', 'Habib'),
+(8, 'A001', 'Ayaka'),
+(9, 'H002', 'Hu tao'),
+(10, 'A002', 'Aether'),
+(11, 'K001', 'Kaeya');
 
 --
 -- Indexes for dumped tables
@@ -203,7 +208,8 @@ ALTER TABLE `invoice`
 --
 ALTER TABLE `invoice_detail`
   ADD PRIMARY KEY (`ID_DETAIL_ROW`),
-  ADD KEY `fk_item_invoice_detail` (`ITEM`);
+  ADD KEY `fk_item_invoice_detail` (`ITEM`),
+  ADD KEY `id_buat_invoice_detail` (`ID_DETAIL`);
 
 --
 -- Indexes for table `item`
@@ -233,37 +239,37 @@ ALTER TABLE `supplier`
 -- AUTO_INCREMENT for table `customer`
 --
 ALTER TABLE `customer`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT for table `invoice`
 --
 ALTER TABLE `invoice`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=53;
 
 --
 -- AUTO_INCREMENT for table `invoice_detail`
 --
 ALTER TABLE `invoice_detail`
-  MODIFY `ID_DETAIL_ROW` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `ID_DETAIL_ROW` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
 
 --
 -- AUTO_INCREMENT for table `item`
 --
 ALTER TABLE `item`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT for table `itemcustomer`
 --
 ALTER TABLE `itemcustomer`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `supplier`
 --
 ALTER TABLE `supplier`
-  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `ID` int(255) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- Constraints for dumped tables
@@ -279,8 +285,8 @@ ALTER TABLE `invoice`
 -- Constraints for table `invoice_detail`
 --
 ALTER TABLE `invoice_detail`
-  ADD CONSTRAINT `fk_id_invoice_detail` FOREIGN KEY (`ID_DETAIL`) REFERENCES `invoice` (`ID`),
-  ADD CONSTRAINT `fk_item_invoice_detail` FOREIGN KEY (`ITEM`) REFERENCES `item` (`ID`);
+  ADD CONSTRAINT `fk_item_invoice_detail` FOREIGN KEY (`ITEM`) REFERENCES `item` (`ID`) ON UPDATE CASCADE,
+  ADD CONSTRAINT `id_buat_invoice_detail` FOREIGN KEY (`ID_DETAIL`) REFERENCES `invoice` (`ID`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `itemcustomer`

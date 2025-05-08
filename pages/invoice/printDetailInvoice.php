@@ -2,20 +2,34 @@
 include '../../connect.php';
 
 // Ambil ID invoice dari URL
-$invoiceID = $_GET['id'];
+$id = $_GET['id'];
 
 // Query untuk mengambil data invoice berdasarkan ID
 $query = "
-    SELECT invoice.ID, INVOICE_NO, customer.NAME AS CUSTOMER_NAME, item.NAME AS ITEM_NAME,
-           QTY, UNIT_PRICE, TOTAL_PRICE, invoice.DATE_INVOICE
-    FROM invoice
+    SELECT * FROM invoice
     JOIN customer ON invoice.CUSTOMER = customer.ID
-    JOIN item ON invoice.ITEM = item.ID
-    WHERE invoice.ID = '$invoiceID'
+    WHERE invoice.ID = '$id'
 ";
 $result = $conn->query($query);
 $row = mysqli_fetch_assoc($result);
-$invoiceID = $row['INVOICE_NO'];
+
+$id_customer = $row['ID'] ?? '';
+$invoice_no = $row['INVOICE_NO'] ?? '';
+$customer = $row['NAME'] ?? '';
+$invoice_date = date('d-m-Y', strtotime($row['DATE_INVOICE']));
+
+$query = "
+    SELECT * FROM invoice_detail
+    JOIN item ON invoice_detail.ITEM = item.ID
+    WHERE invoice_detail.ID_DETAIL = '$id'";
+$result = $conn->query($query);
+$row = mysqli_fetch_assoc($result);
+
+$id_detail = $row['ID_DETAIL'] ?? '';
+$item = $row['NAME'] ?? '';
+$qty = $row['QTY'] ?? '';
+$unit_price = $row['UNIT_PRICE'] ?? 0;
+$total_price = $row['TOTAL_PRICE'] ?? 0;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -71,9 +85,9 @@ $invoiceID = $row['INVOICE_NO'];
 
 
     <div class="invoice-details">
-        <p><strong>Nama Kustomer:</strong> <?= $row['CUSTOMER_NAME']; ?></p>
-        <p><strong>Tanggal:</strong> <?= date('d-m-Y', strtotime($row['DATE_INVOICE'])); ?></p>
-        <p><strong>Kode Invoice:</strong> <?= $row['INVOICE_NO']; ?></p>
+        <p><strong>Nama Kustomer:</strong> <?= $customer; ?></p>
+        <p><strong>Tanggal:</strong> <?= $invoice_date; ?></p>
+        <p><strong>Kode Invoice:</strong> <?= $invoice_no; ?></p>
     </div>
 
     <table>
@@ -84,10 +98,10 @@ $invoiceID = $row['INVOICE_NO'];
             <th>Total Harga</th>
         </tr>
         <tr>
-            <td><?= $row['ITEM_NAME']; ?></td>
-            <td><?= $row['QTY']; ?></td>
-            <td>Rp <?= number_format($row['UNIT_PRICE'], 0, ',', '.'); ?></td>
-            <td>Rp <?= number_format($row['TOTAL_PRICE'], 0, ',', '.'); ?></td>
+            <td><?= $item; ?></td>
+            <td><?= $qty; ?></td>
+            <td>Rp <?= number_format($unit_price, 0, ',', '.'); ?></td>
+            <td>Rp <?= number_format($total_price, 0, ',', '.'); ?></td>
         </tr>
     </table>
 
@@ -99,7 +113,7 @@ $invoiceID = $row['INVOICE_NO'];
         // Setelah halaman dimuat, langsung panggil fungsi print
         window.print();
         window.onafterprint = function() {
-            window.location.href = "detailInvoice.php?id=<?= $invoiceID ?>"; // Redirect setelah print selesai
+            window.location.href = "detailInvoice.php?id=<?= $id ?>"; // Redirect setelah print selesai
         };
     </script>
 

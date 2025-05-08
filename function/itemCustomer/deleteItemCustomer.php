@@ -8,11 +8,11 @@
         $hasil = mysqli_query($conn, $query);
 
         if ($hasil) {
-            echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php';</script>";
+            echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php?status=deleted';</script>";
         } else {
-            echo "<script>alert('Gagal menghapus data');</script>";
+            echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php?status=error_delete';</script>";
         }
     } else {
-        echo "ID tidak ditemukan.";
+        echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php?status=invalid';</script>";
     }
 ?>

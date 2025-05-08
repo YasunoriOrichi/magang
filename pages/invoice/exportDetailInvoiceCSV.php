@@ -61,7 +61,7 @@ $id = (int)substr($kode_invoice, -3);
                 inv.QTY,
                 inv.UNIT_PRICE,
                 inv.TOTAL_PRICE
-                FROM invoice inv
+                FROM invoice_detail inv
                 JOIN item i ON inv.ITEM = i.ID
                 ";
                   

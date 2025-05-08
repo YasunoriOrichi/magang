@@ -1,53 +1,29 @@
 <?php
 // Include the database connection file
 include '../../connect.php';
-$id = $_GET['id'];
 
-    // Query untuk mengambil data customer berdasarkan ID
-    $sql = "SELECT 
-            inv.ID,
-            inv.INVOICE_NO,
-            c.NAME AS customerName,
-            i.NAME AS itemName,
-            inv.QTY,
-            inv.UNIT_PRICE,
-            inv.TOTAL_PRICE
-            FROM invoice inv
-            JOIN customer c ON inv.CUSTOMER = c.ID
-            JOIN item i ON inv.ITEM = i.ID
-            WHERE inv.ID = '$id'";
-    $result = $conn->query($sql);
+$id = $_GET['id'] ?? null;
+if (!$id) {
+    echo "<script>alert('ID tidak ditemukan.'); window.location.href='invoice.php';</script>";
+    exit;
+}
 
-    $sql2 = "SELECT CUSTOMER FROM invoice WHERE ID = '$id'";
-    $result2 = $conn->query($sql2);
-    $row2 = $result2->fetch_assoc();
+// Ambil data invoice
+$invoice = mysqli_fetch_assoc(mysqli_query($conn, "
+    SELECT * FROM invoice 
+    JOIN customer ON invoice.CUSTOMER = customer.ID
+    WHERE invoice.ID = '$id'
+"));
 
-    $customer_id = $row2['CUSTOMER'];
+// Pastikan data ditemukan
+if (!$invoice === 0) {
+    header("Location: invoice.php");
+    exit;
+}
 
-    $sql3 = "SELECT ITEM FROM invoice WHERE ID = '$id'";
-    $result3 = $conn->query($sql3);
-    $row3 = $result3->fetch_assoc();
-
-    $item_id = $row3['ITEM'];
-
-    var_dump($customer_id);
-    var_dump($item_id);
-
-    // Cek apakah data ditemukan
-    if ($result->num_rows > 0) {
-        // Ambil data customer
-        $row = $result->fetch_assoc();
-        $id = $row['ID'];  // ID customer yang akan ditampilkan di form
-        $customer = $row['customerName'];  // Nama customer yang akan ditampilkan di form
-        $item = $row['itemName'];  // Nama item yang akan ditampilkan di form
-        $unit_price = $row['UNIT_PRICE'];  // Harga item yang akan ditampilkan di form
-        $qty = $row['QTY'];  // Jumlah item yang akan ditampilkan di form
-        $total_price = $row['TOTAL_PRICE'];  // Total harga item yang akan ditampilkan di form
-        $invoice_no = $row['INVOICE_NO'];  // Nomor referensi customer yang akan ditampilkan di form
-    } else {
-        echo "<script>window.location.href='ivnocie.php';</script>";
-        exit;
-    }
+$customer_id     = $invoice['CUSTOMER'];
+$invoice_no      = $invoice['INVOICE_NO'];
+$invoice_date    = $invoice['DATE_INVOICE'];
 ?>
 
 <!doctype html>
@@ -97,295 +73,13 @@ $id = $_GET['id'];
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
       <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-body">
-
-        <!-- NAVIGATION BAR -->
-        <!--begin::Container-->
-        <div class="container-fluid">
-          <!--begin::Start Navbar Links-->
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                <i class="bi bi-list"></i>
-              </a>
-            </li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Home</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Contact</a></li>
-          </ul>
-          <!--end::Start Navbar Links-->
-          <!--begin::End Navbar Links-->
-          <ul class="navbar-nav ms-auto">
-            <!--begin::Navbar Search-->
-            <li class="nav-item">
-              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="bi bi-search"></i>
-              </a>
-            </li>
-            <!--end::Navbar Search-->
-            <!--begin::Messages Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
-                <i class="bi bi-chat-text"></i>
-                <span class="navbar-badge badge text-bg-danger">3</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user1-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        Brad Diesel
-                        <span class="float-end fs-7 text-danger"
-                          ><i class="bi bi-star-fill"></i
-                        ></span>
-                      </h3>
-                      <p class="fs-7">Call me whenever you can...</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user8-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        John Pierce
-                        <span class="float-end fs-7 text-secondary">
-                          <i class="bi bi-star-fill"></i>
-                        </span>
-                      </h3>
-                      <p class="fs-7">I got your message bro</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user3-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        Nora Silvester
-                        <span class="float-end fs-7 text-warning">
-                          <i class="bi bi-star-fill"></i>
-                        </span>
-                      </h3>
-                      <p class="fs-7">The subject goes here</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-              </div>
-            </li>
-            <!--end::Messages Dropdown Menu-->
-            <!--begin::Notifications Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
-                <i class="bi bi-bell-fill"></i>
-                <span class="navbar-badge badge text-bg-warning">15</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-envelope me-2"></i> 4 new messages
-                  <span class="float-end text-secondary fs-7">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-people-fill me-2"></i> 8 friend requests
-                  <span class="float-end text-secondary fs-7">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
-                  <span class="float-end text-secondary fs-7">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
-              </div>
-            </li>
-            <!--end::Notifications Dropdown Menu-->
-            <!--begin::Fullscreen Toggle-->
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-              </a>
-            </li>
-            <!--end::Fullscreen Toggle-->
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img
-                  src="../../../dist/assets/img/user2-160x160.jpg"
-                  class="user-image rounded-circle shadow"
-                  alt="User Image"
-                />
-                <span class="d-none d-md-inline">Alexander Pierce</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
-                  <img
-                    src="../../../dist/assets/img/user2-160x160.jpg"
-                    class="rounded-circle shadow"
-                    alt="User Image"
-                  />
-                  <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
-                  </p>
-                </li>
-                <!--end::User Image-->
-                <!--begin::Menu Body-->
-                <li class="user-body">
-                  <!--begin::Row-->
-                  <div class="row">
-                    <div class="col-4 text-center"><a href="#">Followers</a></div>
-                    <div class="col-4 text-center"><a href="#">Sales</a></div>
-                    <div class="col-4 text-center"><a href="#">Friends</a></div>
-                  </div>
-                  <!--end::Row-->
-                </li>
-                <!--end::Menu Body-->
-                <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
-                </li>
-                <!--end::Menu Footer-->
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
-          <!--end::End Navbar Links-->
-        </div>
-        <!--end::Container-->
-      </nav>
+      <?php require '../../component/navbar.php'?>
       <!--end::Header-->
 
       <!-- SIDEBAR NAVIGATION -->
       <!--begin::Sidebar-->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="../dashboard/index.php" class="brand-link">
-            <!--begin::Brand Image-->
-            <img
-              src="../../../dist/assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">AdminLTE 4</span>
-            <!--end::Brand Text-->
-          </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false"
-            >
-              <li class="nav-item">
-                <a href="../dashboard/index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
-                    Dashboard
-                  </p>
-                </a>
-              </li>
-              <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
-                  <i class="nav-icon bi bi-ui-checks-grid"></i>
-                  <p>
-                    Item
-                  </p>
-                </a>
-              </li>
-              <!-- CUSTOMER -->
-              <li class="nav-item">
-                <a href="../customer/customer.php" class="nav-link">
-                  <i class="nav-icon bi bi-clipboard-fill"></i>
-                  <p>
-                    Customer
-                  </p>
-                </a>
-              </li>
-              <!-- SUPPLIER -->
-              <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
-                    Supplier
-                  </p>
-                </a>
-              </li>
-              <!-- ITEM CUSTOMER -->
-              <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
-                </a>
-              </li>
-              <!-- INVOICE -->
-              <li class="nav-item menu-open">
-                <a href="../invoice/invoice.php" class="nav-link">
-                  <i class="nav-icon bi bi-filetype-js"></i>
-                  <p>
-                    Invoice
-                  </p>
-                </a>
-              </li>
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
+      <?php $activePage = 'invoice';
+      require '../../component/sidebar.php'?>
       <!--end::Sidebar-->
 
       <!-- MAIN CONTENT -->
@@ -425,16 +119,23 @@ $id = $_GET['id'];
                 <!--begin::Quick Example-->
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Edit Ivnoice</div></div>
+                  <div class="card-header"><div class="card-title">Edit Invoice</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
                   <form action="../../function/invoice/updateInvoice.php" method="POST">
                     <!--begin::Body-->
                     <div class="card-body">
+                      <!-- KODE INVOICE -->
+                      <div class="mb-3">
+                        <label for="customer" class="form-label">Kode Invoice</label>
+                        <input type="text" class="form-control" id="invoice_no" name="invoice_no" value="<?= $invoice_no ?>" placeholder="Masukkan kode invoice..." required="">
+                      </div>
+                      <!-- NAMA KUSTOMER -->
                       <div class="mb-3">
                         <label for="customer" class="form-label">Nama Kustomer</label>
                         <select class="form-select" id="kustomer" name="kustomer" required="">
-                        <?php
+                          <option selected="" disabled="" value="" hidden>Pilih kustomer</option>
+                          <?php
                             $query = mysqli_query($conn, "SELECT * FROM customer");
                             while ($data = mysqli_fetch_assoc($query)) {
                               $selected = ($data['ID'] == $customer_id) ? 'selected' : '';
@@ -443,36 +144,17 @@ $id = $_GET['id'];
                           ?>
                         </select>
                       </div>
+                      <!-- TANGGAL DIBUAT -->
                       <div class="mb-3">
-                        <label for="item" class="form-label">Nama Item</label>
-                        <select class="form-select" id="item" name="item" required="">
-                        <?php
-                            $query = mysqli_query($conn, "SELECT * FROM item");
-                            while ($data = mysqli_fetch_assoc($query)) {
-                              $selected = ($data['ID'] == $item_id) ? 'selected' : '';
-                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
-                            }
-                          ?>
-                          </option>
-                        </select>
+                        <label for="customer" class="form-label">Tanggal Dibuat</label>
+                        <input type="date" class="form-control" id="invoice_date" name="invoice_date" value="<?= $invoice_date ?>" required=""> 
                       </div>
-                      <div class="mb-3">
-                        <label for="jumlah" class="form-label">Jumlah Item</label>
-                        <input type="number" id="jumlah" name="jumlah" value="<?= $row['QTY'] ?>" placeholder="Contoh: 10" class="form-control" required="">
-                      </div>
-                      <div class="mb-3">
-                        <label for="harga" class="form-label">Harga Item (Opsional)</label>
-                        <input type="number" id="harga" name="harga" value="<?= $row['UNIT_PRICE'] ?>" placeholder="Kosongkan untuk harga default" class="form-control">
-                      </div>
-                      <div class="mb-3">
-                        <label for="kode" class="form-label">Kode Invoice</label>
-                        <input type="text" id="kode" name="kode" value="<?= $invoice_no ?>" placeholder="Contoh: HN070109001" class="form-control">
-                      </div>
+                    </div>
                     </div>
                     <!--end::Body-->
                     <!--begin::Footer-->
                     <div class="card-footer">
-                      <button type="submit" name="id" value= <?= $row['ID'] ?> class="btn btn-primary">Submit</button>
+                      <button type="submit" name="id" value="<?= $id ?>" class="btn btn-primary">Submit</button>
                     </div> <!--end::Footer-->
                   </form> <!--end::Form-->
                 </div> <!--end::Quick Example-->
@@ -526,6 +208,44 @@ $id = $_GET['id'];
       });
     </script>
     <!--end::OverlayScrollbars Configure-->
+
+    <script>
+  function addItem() {
+    const item = document.createElement('div');
+    item.className = 'row mb-3';
+    item.innerHTML = `
+    <div class="row" id="items">
+      <div class="col-3 mb-3">
+        <select class="form-select" name="item[]" required="">
+          <option selected="" disabled="" value="">Pilih nama item</option>
+          <?php
+            $query = mysqli_query($conn, "SELECT * FROM item");
+            while ($data = mysqli_fetch_assoc($query)) {
+              echo "<option value='" . $data['ID'] . "'>" . $data['NAME'] . "</option>";
+            }
+          ?>
+        </select>
+        </div>
+      <div class="col-3">
+        <input type="number" name="jumlah[]" placeholder="Contoh: 10" class="form-control">
+      </div>
+      <div class="col-3">
+        <input type="number" name="harga[]" placeholder="Kosongkan untuk harga default" class="form-control">
+      </div>
+      <div class="col-3">
+        <a href="#" onclick="removeItem(this)">- Hapus Item</a>
+      </div>
+    </div>
+    `;
+    document.getElementById('items').appendChild(item);
+  }
+
+  function removeItem(button) {
+    const itemRow = button.closest('.row');
+    itemRow.remove();
+  }
+    </script>
+
     <!--end::Script-->
   </body>
   <!--end::Body-->

@@ -29,7 +29,7 @@
 
         // CONDITION
         if ($result) {
-            echo "<script>window.location.href='../../pages/item/item.php';</script>";
+            echo "<script>window.location.href='../../pages/item/item.php?status=added';</script>";
         } else {
             echo "Error adding item";
         }

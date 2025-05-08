@@ -2,15 +2,6 @@
     include '../../connect.php';
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $name = $_POST['nama'];
-
-        // VALIDATE NAME
-        $check_name = "SELECT * FROM supplier WHERE NAME = '$name'";
-        $resultName = $conn->query($check_name);
-
-        if ($resultName->num_rows > 0) {
-            echo "<script>window.location.href='../../pages/supplier/supplierAdd.php?status=duplikat';</script>";
-            exit;
-        }
         
         // AUTO NO REF
         $initial = strtoupper(substr($name, 0, 1));
@@ -28,9 +19,9 @@
 
         // CONDITION
         if ($result) {
-            echo "<script>window.location.href='../../pages/supplier/supplier.php';</script>";
+            echo "<script>window.location.href='../../pages/supplier/supplier.php?status=added';</script>";
         } else {
-            echo "Error adding supplier";
+            echo "<script>window.location.href='../../pages/supplier/supplier.php?status=error_add';</script>";
         }
     }
 ?>

@@ -1,19 +1,42 @@
 <?php
 include '../../connect.php';
+$activePage = 'customer'; // Set active page for sidebar
 
+// 1. Ambil data dari search atau reset
 $keyword = $_GET['search'] ?? '';
 $reset = $_GET['reset'] ?? '';
 
+// Jika tombol reset ditekan, kosongkan keyword
 if ($reset) {
   $keyword = '';
 }
 
-$query = "SELECT * FROM customer";
-if ($keyword !== '') {
-  $safeKeyword = mysqli_real_escape_string($conn, $keyword);
-  $query .= " WHERE NAME LIKE '%$safeKeyword%'";
+// 2. Buat query untuk pencarian
+$safeKeyword = mysqli_real_escape_string($conn, $keyword);
+$whereClause = ($keyword !== '') ? "WHERE NAME LIKE '%$safeKeyword%'" : '';
+
+// 3. Ambil semua data dari database berdasarkan pencarian
+$data = mysqli_query($conn, "SELECT * FROM customer $whereClause");
+
+// 4. Simpan data ke dalam array
+$rows = [];
+while ($row = mysqli_fetch_assoc($data)) {
+    $rows[] = $row;
 }
-$result = mysqli_query($conn, $query);
+
+// 5. Pagination
+// 5.1 Hitung total data
+$per_page = 5; // Jumlah data per halaman
+$total_data = count($rows);
+$total_pages = ceil($total_data / $per_page);
+
+// 5.2 Ambil halaman saat ini dari URL (?page=2), default ke 1
+$page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+$page = max(1, min($page, $total_pages)); // Biar aman
+
+// 5.3 Hitung offset array
+$start = ($page - 1) * $per_page;
+$paginated_data = array_slice($rows, $start, $per_page);
 ?>
 
 <!doctype html>
@@ -62,374 +85,11 @@ $result = mysqli_query($conn, $query);
   <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
     <!--begin::App Wrapper-->
     <div class="app-wrapper">
-      <!--begin::Header-->
-      <nav class="app-header navbar navbar-expand bg-body">
-
-        <!-- NAVIGATION BAR -->
-        <!--begin::Container-->
-        <div class="container-fluid">
-          <!--begin::Start Navbar Links-->
-          <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button">
-                <i class="bi bi-list"></i>
-              </a>
-            </li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Home</a></li>
-            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Contact</a></li>
-          </ul>
-          <!--end::Start Navbar Links-->
-          <!--begin::End Navbar Links-->
-          <ul class="navbar-nav ms-auto">
-            <!--begin::Navbar Search-->
-            <li class="nav-item">
-              <a class="nav-link" data-widget="navbar-search" href="#" role="button">
-                <i class="bi bi-search"></i>
-              </a>
-            </li>
-            <!--end::Navbar Search-->
-            <!--begin::Messages Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
-                <i class="bi bi-chat-text"></i>
-                <span class="navbar-badge badge text-bg-danger">3</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user1-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        Brad Diesel
-                        <span class="float-end fs-7 text-danger"
-                          ><i class="bi bi-star-fill"></i
-                        ></span>
-                      </h3>
-                      <p class="fs-7">Call me whenever you can...</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user8-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        John Pierce
-                        <span class="float-end fs-7 text-secondary">
-                          <i class="bi bi-star-fill"></i>
-                        </span>
-                      </h3>
-                      <p class="fs-7">I got your message bro</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <!--begin::Message-->
-                  <div class="d-flex">
-                    <div class="flex-shrink-0">
-                      <img
-                        src="../../../dist/assets/img/user3-128x128.jpg"
-                        alt="User Avatar"
-                        class="img-size-50 rounded-circle me-3"
-                      />
-                    </div>
-                    <div class="flex-grow-1">
-                      <h3 class="dropdown-item-title">
-                        Nora Silvester
-                        <span class="float-end fs-7 text-warning">
-                          <i class="bi bi-star-fill"></i>
-                        </span>
-                      </h3>
-                      <p class="fs-7">The subject goes here</p>
-                      <p class="fs-7 text-secondary">
-                        <i class="bi bi-clock-fill me-1"></i> 4 Hours Ago
-                      </p>
-                    </div>
-                  </div>
-                  <!--end::Message-->
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer">See All Messages</a>
-              </div>
-            </li>
-            <!--end::Messages Dropdown Menu-->
-            <!--begin::Notifications Dropdown Menu-->
-            <li class="nav-item dropdown">
-              <a class="nav-link" data-bs-toggle="dropdown" href="#">
-                <i class="bi bi-bell-fill"></i>
-                <span class="navbar-badge badge text-bg-warning">15</span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <span class="dropdown-item dropdown-header">15 Notifications</span>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-envelope me-2"></i> 4 new messages
-                  <span class="float-end text-secondary fs-7">3 mins</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-people-fill me-2"></i> 8 friend requests
-                  <span class="float-end text-secondary fs-7">12 hours</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item">
-                  <i class="bi bi-file-earmark-fill me-2"></i> 3 new reports
-                  <span class="float-end text-secondary fs-7">2 days</span>
-                </a>
-                <div class="dropdown-divider"></div>
-                <a href="#" class="dropdown-item dropdown-footer"> See All Notifications </a>
-              </div>
-            </li>
-            <!--end::Notifications Dropdown Menu-->
-            <!--begin::Fullscreen Toggle-->
-            <li class="nav-item">
-              <a class="nav-link" href="#" data-lte-toggle="fullscreen">
-                <i data-lte-icon="maximize" class="bi bi-arrows-fullscreen"></i>
-                <i data-lte-icon="minimize" class="bi bi-fullscreen-exit" style="display: none"></i>
-              </a>
-            </li>
-            <!--end::Fullscreen Toggle-->
-            <!--begin::User Menu Dropdown-->
-            <li class="nav-item dropdown user-menu">
-              <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                <img
-                  src="../../../dist/assets/img/user2-160x160.jpg"
-                  class="user-image rounded-circle shadow"
-                  alt="User Image"
-                />
-                <span class="d-none d-md-inline">Alexander Pierce</span>
-              </a>
-              <ul class="dropdown-menu dropdown-menu-lg dropdown-menu-end">
-                <!--begin::User Image-->
-                <li class="user-header text-bg-primary">
-                  <img
-                    src="../../../dist/assets/img/user2-160x160.jpg"
-                    class="rounded-circle shadow"
-                    alt="User Image"
-                  />
-                  <p>
-                    Alexander Pierce - Web Developer
-                    <small>Member since Nov. 2023</small>
-                  </p>
-                </li>
-                <!--end::User Image-->
-                <!--begin::Menu Body-->
-                <li class="user-body">
-                  <!--begin::Row-->
-                  <div class="row">
-                    <div class="col-4 text-center"><a href="#">Followers</a></div>
-                    <div class="col-4 text-center"><a href="#">Sales</a></div>
-                    <div class="col-4 text-center"><a href="#">Friends</a></div>
-                  </div>
-                  <!--end::Row-->
-                </li>
-                <!--end::Menu Body-->
-                <!--begin::Menu Footer-->
-                <li class="user-footer">
-                  <a href="#" class="btn btn-default btn-flat">Profile</a>
-                  <a href="#" class="btn btn-default btn-flat float-end">Sign out</a>
-                </li>
-                <!--end::Menu Footer-->
-              </ul>
-            </li>
-            <!--end::User Menu Dropdown-->
-          </ul>
-          <!--end::End Navbar Links-->
-        </div>
-        <!--end::Container-->
-      </nav>
-      <!--end::Header-->
+      <!-- NAVIGATION BAR -->
+      <?php require '../../component/navbar.php'?>
 
       <!-- SIDEBAR NAVIGATION -->
-      <!--begin::Sidebar-->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="../dashboard/index.php" class="brand-link">
-            <!--begin::Brand Image-->
-            <img
-              src="../../../dist/assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">AdminLTE 4</span>
-            <!--end::Brand Text-->
-          </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false"
-            >
-              <li class="nav-item">
-                <a href="../dashboard/index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
-                    Dashboard
-                  </p>
-                </a>
-              </li>
-              <!-- ITEM -->
-              <li class="nav-item  ">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-ui-checks-grid"></i>
-                  <p>
-                    Item
-                  </p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                  </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item  ">
-                    <a href="../item/item.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Daftar Item</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="../item/itemAdd.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tambah Item</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- CUSTOMER -->
-              <li class="nav-item menu-open">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-clipboard-fill"></i>
-                  <p>
-                    Customer
-                  </p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item menu-open">
-                    <a href="../customer/customer.php" class="nav-link active">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Daftar Kustomer</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="../customer/customerAdd.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tambah Kustomer</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- SUPPLIER -->
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-box-seam-fill"></i>
-                  <p>
-                    Supplier
-                  </p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="../supplier/supplier.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Daftar Supplier</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="../supplier/supplierAdd.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tambah Supplier</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- ITEM CUSTOMER -->
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-pencil-square"></i>
-                  <p>
-                    Item Customer
-                  </p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Daftar Item Kustomer</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="../itemCustomer/itemCustomerAdd.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tambah Item Kustomer</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-              <!-- INVOICE -->
-              <li class="nav-item">
-                <a href="#" class="nav-link">
-                  <i class="nav-icon bi bi-filetype-js"></i>
-                  <p>
-                    Invoice
-                  </p>
-                  <i class="nav-arrow bi bi-chevron-right"></i>
-                </a>
-                <ul class="nav nav-treeview">
-                  <li class="nav-item">
-                    <a href="../invoice/invoice.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Daftar Invoice</p>
-                    </a>
-                  </li>
-                  <li class="nav-item">
-                    <a href="../invoice/invoiceAdd.php" class="nav-link">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Tambah Invoice</p>
-                    </a>
-                  </li>
-                </ul>
-              </li>
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
-      <!--end::Sidebar-->
+      <?php require '../../component/sidebar.php';?>
 
       <!-- MAIN CONTENT -->
       <!--begin::App Main-->
@@ -449,31 +109,7 @@ $result = mysqli_query($conn, $query);
                 </ol>
               </div>
             </div> <!--end::Row-->
-            <!-- begin::notifikasi berhasil / gagal -->
-            <?php if (isset($_GET['status'])): ?>
-              <?php if ($_GET['status'] == 'gagal'): ?>
-                  <div class="alert alert-danger" role="alert">
-                      <b>ERROR NOTE: </b> Gagal menghapus data. Data sedang digunakan.
-                  </div>
-              <?php elseif ($_GET['status'] == 'berhasil'): ?>
-                  <div class="alert alert-success" role="alert">
-                      Data berhasil dihapus.
-                  </div>
-              <?php elseif ($_GET['status'] == 'error'): ?>
-                  <div class="alert alert-warning" role="alert">
-                      Terjadi kesalahan saat menghapus data.
-                  </div>
-              <?php elseif ($_GET['status'] == 'invalid'): ?>
-                  <div class="alert alert-warning" role="alert">
-                      ID tidak ditemukan.
-                  </div>
-              <?php endif; ?>
-              <script>
-                  // Setelah alert ditampilkan, redirect ke halaman yang sama tanpa query string
-                  window.history.replaceState(null, null, window.location.pathname);
-              </script>
-          <?php endif; ?>
-          <!-- end::notifikasi berhasil / gagal -->
+          <?php include '../../component/notification.php'; ?>
           </div> <!--end::Container-->
         </div>
         <!--end::App Content Header-->
@@ -504,6 +140,7 @@ $result = mysqli_query($conn, $query);
                           value="<?= htmlspecialchars($keyword) ?>"
                           placeholder="Masukkan Nama Item..."/>
                       </div>
+                      <input type="hidden" name="page" value="1"> <!-- 🔧 penting: reset ke page 1 -->
                       <div class="col-1">
                         <button type="submit" class="btn btn-warning mb-3"> Search</button>
                         </div><div class="col-1">
@@ -522,7 +159,7 @@ $result = mysqli_query($conn, $query);
                   <button type="button" name="id" onclick="window.location.href='customerAdd.php'" class="btn btn-primary bi-plus-lg"> Tambah</button>
                   </div>
                   <!-- /.card-header -->
-                  <div class="card-body p-0">
+                  <div class="card-body">
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -534,10 +171,8 @@ $result = mysqli_query($conn, $query);
                       </thead>
                       <tbody>
                       <?php
-                        // Check if there are results
-                        if (mysqli_num_rows($result) > 0) {
-                            // Loop through the results and display them in the table
-                            while ($row = mysqli_fetch_assoc($result)) {
+                        if (count($paginated_data) > 0) {
+                            foreach ($paginated_data as $row) {
                                 echo "<tr class='align-middle'>";
                                 echo "<td>" . $row['ID'] . "</td>";
                                 echo "<td><div><div style='width: 50%'>" . $row['REF_NO'] . "</div></div></td>";
@@ -549,7 +184,7 @@ $result = mysqli_query($conn, $query);
                                       <form action='../../function/customer/deleteCustomer.php' method='GET' style='display:inline-block; margin-right: 1px;'>
                                       <button type='submit' onclick=\"return confirm('Apakah kamu yakin ingin menghapus data ini?')\" name='ID' value='" . $row['ID'] . "' class='btn btn-danger bi-trash'></button>
                                       </form>
-                                     </td>";
+                                    </td>";
                                 echo "</tr>";
                             }
                         } else {
@@ -559,6 +194,42 @@ $result = mysqli_query($conn, $query);
                       </tbody>
                     </table>
                   </div> <!-- /.card-body -->
+                  <!-- CARD-FOOTER -->
+                  <div class="card-footer clearfix">
+                    <ul class="pagination pagination-sm m-0 float-end">
+
+                      <!-- Tombol Previous -->
+                      <?php if ($page > 1): ?>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($keyword) ?>">«</a>
+                        </li>
+                      <?php else: ?>
+                        <li class="page-item disabled"><a class="page-link">«</a></li>
+                      <?php endif; ?>
+
+                      <!-- Nomor Halaman -->
+                      <?php
+                        for ($i = 1; $i <= $total_pages; $i++) {
+                          if ($i == $page) {
+                            echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
+                          } else {
+                            echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
+                          }
+                        }
+                      ?>
+
+                      <!-- Tombol Next -->
+                      <?php if ($page < $total_pages): ?>
+                        <li class="page-item">
+                          <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($keyword) ?>">»</a>
+                        </li>
+                      <?php else: ?>
+                        <li class="page-item disabled"><a class="page-link">»</a></li>
+                      <?php endif; ?>
+
+                    </ul>
+                  </div>
+                  <!-- /.CARD-FOOTER -->
                 </div> <!-- /.card -->
               </div> <!-- /.col -->
             </div> <!--end::Row-->
@@ -568,6 +239,7 @@ $result = mysqli_query($conn, $query);
     </div>
     <!--end::App Wrapper-->
     <!--begin::Script-->
+
     <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <script
       src="https://cdn.jsdelivr.net/npm/overlayscrollbars@2.10.1/browser/overlayscrollbars.browser.es6.min.js"

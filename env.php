@@ -8,8 +8,8 @@ $DB_USER="root"; //username database
 $DB_PASS=""; //password dari database
 
 //konfigurasi folder
-$name_project= "genshin"; //nama project kalian
-$base_url="https://nevil.localhost/"; //nama base URL projek kalian
+$name_project= "magang"; //nama project kalian
+$base_url="https://magang.localhost/"; //nama base URL projek kalian
 
 //     return $base_url;
 // }

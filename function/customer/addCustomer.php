@@ -28,7 +28,7 @@
 
         // CONDITION
         if ($result) {
-            echo "<script>window.location.href='../../pages/customer/customer.php';</script>";
+            echo "<script>window.location.href='../../pages/customer/customer.php?status=added';</script>";
         } else {
             echo "Error adding customer";
         }

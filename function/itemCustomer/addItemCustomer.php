@@ -43,6 +43,6 @@
         $conn->query($update);
 
         // REDIRECT / FEEDBACK
-        echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php';</script>";
+        echo "<script>window.location.href='../../pages/itemCustomer/itemCustomer.php?status=deleted';</script>";
     }
 ?>

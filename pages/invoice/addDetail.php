@@ -1,25 +1,11 @@
 <?php
-// Include the database connection file
 include '../../connect.php';
-    // Ambil ID customer dari URL
-    $id = $_GET['ID'];
-    // Query untuk mengambil data customer berdasarkan ID
-    $sql = "SELECT * FROM customer WHERE ID = '$id'";
-    $result = $conn->query($sql);
 
-    // Cek apakah data ditemukan
-    if ($result->num_rows > 0) {
-        // Ambil data customer
-        $row = $result->fetch_assoc();
-        $id = $row['ID'];  // ID customer yang akan ditampilkan di form
-        $nama = $row['NAME'];  // Nama customer yang akan ditampilkan di form
-        $ref_no = $row['REF_NO'];  // Nomor referensi customer yang akan ditampilkan di form
+$id = $_GET['id'];
+if (!isset($_GET['id'])) {
+    header('Location: ../../pages/invoice/invoice.php');
+}
 
-    } else {
-        echo "Customer tidak ditemukan.";
-        echo "<script>window.location.href='customer.php';</script>";
-        exit;
-    }
 ?>
 
 <!doctype html>
@@ -74,92 +60,8 @@ include '../../connect.php';
 
       <!-- SIDEBAR NAVIGATION -->
       <!--begin::Sidebar-->
-      <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
-        <!--begin::Sidebar Brand-->
-        <div class="sidebar-brand">
-          <!--begin::Brand Link-->
-          <a href="../dashboard/index.php" class="brand-link">
-            <!--begin::Brand Image-->
-            <img
-              src="../../../dist/assets/img/AdminLTELogo.png"
-              alt="AdminLTE Logo"
-              class="brand-image opacity-75 shadow"
-            />
-            <!--end::Brand Image-->
-            <!--begin::Brand Text-->
-            <span class="brand-text fw-light">AdminLTE 4</span>
-            <!--end::Brand Text-->
-          </a>
-          <!--end::Brand Link-->
-        </div>
-        <!--end::Sidebar Brand-->
-        <!--begin::Sidebar Wrapper-->
-        <div class="sidebar-wrapper">
-          <nav class="mt-2">
-            <!--begin::Sidebar Menu-->
-            <ul
-              class="nav sidebar-menu flex-column"
-              data-lte-toggle="treeview"
-              role="menu"
-              data-accordion="false"
-            >
-              <li class="nav-item">
-                <a href="../dashboard/index.php" class="nav-link">
-                  <i class="nav-icon bi bi-speedometer"></i>
-                  <p>
-                    Dashboard
-                  </p>
-                </a>
-              </li>
-              <!-- ITEM -->
-              <li class="nav-item">
-                <a href="../item/item.php" class="nav-link">
-                  <i class="nav-icon bi bi-ui-checks-grid"></i>
-                  <p>
-                    Item
-                  </p>
-                </a>
-              </li>
-              <!-- CUSTOMER -->
-              <li class="nav-item menu-open">
-                <a href="../customer/customer.php" class="nav-link">
-                  <i class="nav-icon bi bi-clipboard-fill"></i>
-                  <p>
-                    Customer
-                  </p>
-                </a>
-              </li>
-              <!-- SUPPLIER -->
-              <li class="nav-item">
-                <a href="../supplier/supplier.php" class="nav-link">
-                <i class="nav-icon bi bi-box-seam-fill"></i>
-                <p>
-                    Supplier
-                  </p>
-                </a>
-              </li>
-              <!-- ITEM CUSTOMER -->
-              <li class="nav-item">
-                <a href="../itemCustomer/itemCustomer.php" class="nav-link">
-                <i class="nav-icon bi bi-pencil-square"></i>
-                <p>Item Customer</p>
-                </a>
-              </li>
-              <!-- INVOICE -->
-              <li class="nav-item">
-                <a href="../invoice/invoice.php" class="nav-link">
-                  <i class="nav-icon bi bi-filetype-js"></i>
-                  <p>
-                    Invoice
-                  </p>
-                </a>
-              </li>
-            </ul>
-            <!--end::Sidebar Menu-->
-          </nav>
-        </div>
-        <!--end::Sidebar Wrapper-->
-      </aside>
+      <?= $activePage = 'invoice';
+      require '../../component/sidebar.php';?>
       <!--end::Sidebar-->
 
       <!-- MAIN CONTENT -->
@@ -173,11 +75,11 @@ include '../../connect.php';
           <div class="container-fluid">
             <!--begin::Row-->
             <div class="row">
-              <div class="col-sm-6"><h3 class="mb-0">Kustomer</h3></div>
+              <div class="col-sm-6"><h3 class="mb-0">Add Invoice Item</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item"><a href="customer.php">Customer</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Edit Customer</li>
+                  <li class="breadcrumb-item"><a href="invoice.php">Invoice</a></li>
+                  <li class="breadcrumb-item active" aria-current="page">Add Invoice Item</li>
                 </ol>
               </div>
             </div> <!--end::Row-->
@@ -185,7 +87,7 @@ include '../../connect.php';
         </div>
         <!--end::App Content Header-->
 
-        <!-- EDIT KUSTOMER -->
+        <!-- EDIT INVOICE -->
         <!--begin::App Content-->
         <div class="container-fluid">
             <!--begin::Row-->
@@ -199,25 +101,45 @@ include '../../connect.php';
                 <!--begin::Quick Example-->
                 <div class="card card-primary card-outline mb-4">
                   <!--begin::Header-->
-                  <div class="card-header"><div class="card-title">Edit Kustomer</div></div>
+                  <div class="card-header"><div class="card-title">Add Invoice Item</div></div>
                   <!--end::Header-->
                   <!--begin::Form-->
-                  <form action="../../function/customer/updateCustomer.php" method="POST">
+                  <form action="../../function/invoice/addInvoiceItem.php" method="POST">
                     <!--begin::Body-->
                     <div class="card-body">
+                      <div class="row" id="items">
+                        <div class="row mb-3">
+                      <!-- KODE INVOICE -->
                       <div class="mb-3">
-                        <label for="name" class="form-label">Nama Kustomer</label>
-                        <input type="text" id="nama" name="nama" value="<?= $row['NAME'] ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
+                        <label for="customer" class="form-label">Nama Item</label>
+                        <select class="form-select" id="item" name="item" required="">
+                          <option selected="" disabled="" value="" hidden>Pilih item</option>
+                          <?php
+                            $query = mysqli_query($conn, "SELECT * FROM item");
+                            while ($data = mysqli_fetch_assoc($query)) {
+                              $selected = ($data['ID'] == $item_id) ? 'selected' : '';
+                              echo "<option value='" . $data['ID'] . "' $selected>" . $data['NAME'] . "</option>";
+                            }
+                          ?>
+                        </select>
                       </div>
+                      <!-- NAMA KUSTOMER -->
                       <div class="mb-3">
-                        <label for="kode" class="form-label">Kode Kustomer</label>
-                        <input type="text" id="kode" name="kode" value="<?= $ref_no ?>" placeholder="Contoh: Dwi Yudhistira" class="form-control">
+                        <label for="customer" class="form-label">Jumlah</label>
+                        <input type="number" class="form-control" id="jumlah" name="jumlah" value="<?= $qty ?>" placeholder="Masukkan jumlah item..." required="">
                       </div>
+                      <!-- TANGGAL DIBUAT -->
+                      <div class="mb-3">
+                        <label for="customer" class="form-label">Harga Satuan (Opsional)</label>
+                        <input type="number" class="form-control" id="harga" name="harga" value="<?= $unit_price ?>" placeholder="Masukkan harga item..."> 
+                      </div>
+                    </div>
+                    </div>
                     </div>
                     <!--end::Body-->
                     <!--begin::Footer-->
                     <div class="card-footer">
-                      <button type="submit" name="id" value= <?= $row['ID'] ?> class="btn btn-primary">Submit</button>
+                      <button type="submit" name="id" value="<?= $id ?>" class="btn btn-primary">Submit</button>
                     </div> <!--end::Footer-->
                   </form> <!--end::Form-->
                 </div> <!--end::Quick Example-->
@@ -271,6 +193,44 @@ include '../../connect.php';
       });
     </script>
     <!--end::OverlayScrollbars Configure-->
+
+    <script>
+  function addItem() {
+    const item = document.createElement('div');
+    item.className = 'row mb-3';
+    item.innerHTML = `
+    <div class="row" id="items">
+      <div class="col-3 mb-3">
+        <select class="form-select" name="item[]" required="">
+          <option selected="" disabled="" value="">Pilih nama item</option>
+          <?php
+            $query = mysqli_query($conn, "SELECT * FROM item");
+            while ($data = mysqli_fetch_assoc($query)) {
+              echo "<option value='" . $data['ID'] . "'>" . $data['NAME'] . "</option>";
+            }
+          ?>
+        </select>
+        </div>
+      <div class="col-3">
+        <input type="number" name="jumlah[]" placeholder="Contoh: 10" class="form-control">
+      </div>
+      <div class="col-3">
+        <input type="number" name="harga[]" placeholder="Kosongkan untuk harga default" class="form-control">
+      </div>
+      <div class="col-3">
+        <a href="#" onclick="removeItem(this)">- Hapus Item</a>
+      </div>
+    </div>
+    `;
+    document.getElementById('items').appendChild(item);
+  }
+
+  function removeItem(button) {
+    const itemRow = button.closest('.row');
+    itemRow.remove();
+  }
+    </script>
+
     <!--end::Script-->
   </body>
   <!--end::Body-->
