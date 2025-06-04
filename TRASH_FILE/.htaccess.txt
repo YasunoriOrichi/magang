@@ -1,2 +1,0 @@
-# Aktifkan PHP auto_prepend_file
-php_value auto_prepend_file "env.php"
