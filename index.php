@@ -1,7 +1,12 @@
 <?php
+<<<<<<< Updated upstream
 require_once 'env.php';
 echo getBaseUrl(); 
 include 'connect.php';
+=======
+define('ENV_PATH', __DIR__ . '/config/env.php');
+require_once ENV_PATH;
+>>>>>>> Stashed changes
 ?>
 
 <!DOCTYPE html>
@@ -13,9 +18,15 @@ include 'connect.php';
     <title>Document</title>
 </head>
 <body>
+<<<<<<< Updated upstream
     <script>
         // Redirect to the connect.php page
         window.location.href = 'pages/index.php';
     </script>
+=======
+    <?php
+        header('Location: pages/dashboard/index.php');
+    ?>
+>>>>>>> Stashed changes
 </body>
 </html>
