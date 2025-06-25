@@ -11,7 +11,12 @@ if (isset($_GET['inv'])) {
   echo "ID tidak ditemukan di URL.";
 }
 
-// Query untuk mendapatkan data invoice berdasarkan ID
+// COMPANY SETTING
+$company = "SELECT * FROM setting WHERE COMPANY_ID = 1";
+$company_result = $conn->query($company);
+$company = $company_result->fetch_assoc();
+
+// INVOICE
 $invoice = "SELECT * FROM invoice
             JOIN customer ON invoice.CUSTOMER = customer.ID
             WHERE invoice.ID = '$id'";
@@ -21,8 +26,15 @@ if ($invoice_result->num_rows > 0) {
     $customer = $row['NAME'];  // Nama customer yang akan ditampilkan di form
     $invoice_no = $row['INVOICE_NO'];  // kode invoice yang akan ditampilkan di form
     $invoice_date = $row['DATE_INVOICE'];  // Tanggal invoice yang akan ditampilkan di form
+    $note = $row['NOTE'];  // Keterangan invoice yang akan ditampilkan di form
 }
 
+// CUSTOMER
+$query = "SELECT * FROM customer WHERE ID = '$row[CUSTOMER]'";
+$resultCustomer = $conn->query($query);
+$client = mysqli_fetch_assoc($resultCustomer);
+
+// DETAIL INVOICE
 $detail = "SELECT * FROM invoice_detail
         JOIN item ON invoice_detail.ITEM = item.ID
         WHERE invoice_detail.ID_DETAIL = '$id'";
@@ -41,6 +53,11 @@ if ($detail_result->num_rows > 0) {
         ];
     }
 }
+
+// PAYMENT
+$payment = "SELECT SUM(PAID) AS PAYMENT FROM payment WHERE INVOICE_ID = '$id'";
+$payment_result = $conn->query($payment);
+$payment = $payment_result->fetch_assoc();
 ?>
 
 <!doctype html>
@@ -84,7 +101,28 @@ if ($detail_result->num_rows > 0) {
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+  <style>
+    .logo-img {
+      width: 120px;
+      height: 120px; /* atau height: 100px jika ingin batas tinggi */
+      object-fit: contain; /* biar tidak ketarik */
+      margin-bottom: 20px;
+    }
+
+    .signature-img {
+      width: 200px;
+      height: 200; /* atau height: 100px jika ingin batas tinggi */
+      object-fit: contain; /* biar tidak ketarik */
+    }
+
+    .line {
+      border: none;
+      height: 2px;
+      background-color: black;
+    }
+  </style>
+
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -113,45 +151,48 @@ if ($detail_result->num_rows > 0) {
             <div class="container-fluid">
               <div class="row">
                 <div class="card card-primary card-outline mb-4">
-                  <div class="card-header">
-                    <div class="card-title">
-                      <a name="id" href="<?= $controller->formUpdateInvoice() . $id ?>" class="btn btn-primary bi-pencil-square"> Edit Info</a>
-                      <a name="id" href="printDetailInvoice.php?id=<?= $id ?>" class="btn btn-primary bi-printer"> Print</a>
-                      <a name="id" href="exportDetailInvoiceCSV.php?id=<?= $id ?>" class="btn btn-primary bi-file-earmark-text"> Export CSV</a>
-                    </div>
-                  </div>
                   <!-- BODY -->
                   <div class="card-body">
                     <div class="row">
-                      <div class="col-2 mb-3">
-                        <label for="kode" class="form-label">Kode Invoice</label>
+                      <div class="col">
+                        <img src="<?= BASE_PATH . $company['COMPANY_LOGO'] ?>" class="logo-img" alt="Logo Perusahaan">
                       </div>
-                      <div class="col-3 mb-3">
-                        <label for="name" class="form-label">: <?= $invoice_no ?></label>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-2 mb-3">
-                        <label class="form-label">Nama Kustomer</label>
-                      </div>
-                      <div class="col-3 mb-3">
-                        <label class="form-label">: <?= $customer ?></label>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-2">
-                        <label class="form-label">tanggal</label>
-                      </div>
-                      <div class="col-3 mb-3">
+                      <div class="col-3 mt-4">
+                        <div class="row">
+                        <div class="col">
+                          <label class="form-label">Referensi</label>
+                          <label class="form-label">Tanggal</label>
+                        </div>
+                        <div class="col">
+                        <label class="form-label">: <?= $invoice_no ?></label>
                         <label class="form-label">: <?= $invoice_date ?></label>
+                        </div>
+                        </div>
                       </div>
                     </div>
+
+                    <div class="row mt-4">
+                    <div class="col">
+                        <label class="form-label"><b>Info Perusahaan</b></label>
+                        <hr class="line">
+                        <label class="form-label" style="color: blue"><?= strtoupper($company['COMPANY_NAME']) ?></label><br>
+                        <label class="form-label">Alamat: <?= $company['COMPANY_ADDRESS'] ?></label><br>
+                        <label class="form-label">No. Telp: <?= $company['COMPANY_PHONE'] ?></label><br>
+                        <label class="form-label">E-mail: <?= $company['COMPANY_EMAIL'] ?></label>
+                    </div>
+
+                    <div class="col">
+                        <label class="form-label"><b>Tagihan Untuk</b></label>
+                        <hr class="line">
+                        <label class="form-label" style="color: blue"><?= strtoupper($customer) ?></label><br>
+                        <label class="form-label">No. Telp: <?= $client['NUMBER'] ?></label><br>
+                        <label class="form-label">E-mail: <?= $client['EMAIL'] ?></label><br>
+                    </div>
+                    </div>
+                    <a name="id" href="<?= $controller->formUpdateInvoice() . $id ?>" class="btn btn-primary bi-pencil-square"> Edit Info</a>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body" id="cetak">
-                    <a name="id" href="<?= $controller->formAddDetailInvoice() . $id ?>" class="btn btn-primary bi-plus-circle mb-3"> Tambah Item</a>
                     <table class="table table-bordered">
                       <thead>
                         <tr>
@@ -160,7 +201,7 @@ if ($detail_result->num_rows > 0) {
                           <th style="width: 10%;">Jumlah Item</th>
                           <th style="width: 17%">Harga Satuan</th>
                           <th style="width: 20%;">Total Harga</th>
-                          <th style="width: 9%">Aksi</th>
+                          <th style="width: 9%">Setting</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -177,8 +218,15 @@ if ($detail_result->num_rows > 0) {
                                 <td>Rp<?= number_format($detail['unit_price'], 0, ',', '.') ?></td>
                                 <td>Rp<?= number_format($detail['total_price'], 0, ',', '.') ?></td>
                                 <td>
-                                  <a href="<?= $controller->formUpdateDetailInvoice() . $detail['id_detail_row']?>" class='btn btn-primary mb-2 bi-pencil'></a>
-                                  <a href="<?= $controller->deleteDetailInvoice() . "&inv=" . $id . "&id=" . $detail['id_detail_row']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')" class='btn btn-danger mb-2 bi-trash'></a>
+                                  <div class="btn-group">
+                                    <a class="btn btn-primary dropdown-toggle bi-gear" data-bs-toggle="dropdown" aria-expanded="false"> </a>
+                                    <ul class="dropdown-menu">
+                                      <li><a class="dropdown-item" href="<?= $controller->formUpdateDetailInvoice() . $detail['id_detail_row']?>">Edit</a></li>
+                                      <li><a class="dropdown-item" href="<?= $controller->deleteDetailInvoice() . "&inv=" . $id . "&id=" . $detail['id_detail_row']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')">Delete</a></li>
+                                    </ul>
+                                  </div>
+                                  <!-- <a href="<?= $controller->formUpdateDetailInvoice() . $detail['id_detail_row']?>" class='btn btn-primary mb-2 bi-pencil'></a>
+                                  <a href="<?= $controller->deleteDetailInvoice() . "&inv=" . $id . "&id=" . $detail['id_detail_row']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')" class='btn btn-danger mb-2 bi-trash'></a> -->
                                 </td>
                               </tr>
                             <?php 
@@ -189,11 +237,56 @@ if ($detail_result->num_rows > 0) {
                                 <tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>
                             <?php endif ?>
                             <tr>
-                          <th colspan="4">Total Harga Item</th>
-                        <th colspan="2">Rp<?= number_format($total, 0, ',', '.') ?></th>
                       </tr>
                     </tbody>
                   </table>
+                  <div class="row mt-3">
+                    <div class="col mb-4">
+                      <a name="id" href="<?= $controller->formAddDetailInvoice() . $id ?>" class="btn btn-primary bi-plus-circle"> Tambah Item</a>
+                    </div>
+                    <div class="col-3">
+                      <div class="row">
+                        <div class="col">
+                          <label>Total</label><br>
+                          <label>Dibayar</label><br>
+                          <label>Tagihan</label>
+                        </div>
+                        <div class="col">
+                          <label>: Rp<?= number_format($total, 0, ',', '.') ?></label><br>
+                          <label>: Rp<?= number_format($payment['PAYMENT'], 0, ',', '.') ?></label><br>
+                          <label>: Rp<?= number_format($total - $payment['PAYMENT'], 0, ',', '.') ?></label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row mt-5">
+                    <div class="col">
+                      <div class="row mb-5">
+                        <label><b>KETERANGAN:</b></label><hr class="line">
+                        <label><?= $note ?? 'Tidak ada keterangan' ?></label>
+                      </div>
+                      <div class="row">
+                        <label><b>SYARAT & KETENTUAN:</b></label><hr class="line">
+                        <label>
+                          1. Barang tidak dapat dikembalikan, kecuali cacat produksi. <br>
+                          2. Mohon konfirmasi pembayaran ke admin sesuai nomor yang telah tercantum diatas.
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col">
+                      <div class="row">
+                        <div class="text-center">
+                          <p><strong><?= $invoice_date ?></strong></p>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="text-center">
+                          <p><img class="signature-img" src="<?= $company['COMPANY_SIGNATURE'] ?>" alt="Tanda Tangan"></p>
+                          <p><strong>Nevil Nurseri</strong></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div> <!-- /.col -->
               </div> <!--end::Quick Example-->
             </div>

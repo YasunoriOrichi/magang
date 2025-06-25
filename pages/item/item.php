@@ -82,7 +82,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -140,7 +140,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
             <!-- CARD -->
             <div class="card mb-4">
               <div class="card-header">
-                <a href="<?= $controller->formAddItem() ?>" class="btn btn-primary bi-plus-lg"> Tambah</a>
+                <a href="<?= $controller->formAddItem() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
               </div>
               <!-- CARD HEADER -->
               <div class="card-body">

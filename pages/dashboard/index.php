@@ -1,6 +1,5 @@
 <?php
 require_once '../../config/BaseController.php';
-include $_SERVER['DOCUMENT_ROOT'] . '/function/repository.php';
 $controller = new BaseController();
 $conn = getConnection();
 $activePage = 'dashboard';
@@ -73,29 +72,19 @@ $totalInvoice = $invoiceData['total'];
     <!--end::Required Plugin(AdminLTE)-->
   </head>
   <!--end::Head-->
-  <!--begin::Body-->
-  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
-    <!--begin::App Wrapper-->
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
-      <!--begin::Header-->
       <?php require '../../component/navbar.php'?>
-      <!--end::Header-->
 
       <!-- SIDEBAR NAVIGATION -->
-      <!--begin::Sidebar-->
       <?php require '../../component/sidebar.php';?>
-      <!--end::Sidebar-->
 
       <!-- MAIN CONTENT -->
-      <!--begin::App Main-->
       <main class="app-main">
 
         <!-- JUDUL / HEADER -->
-        <!--begin::App Content Header-->
         <div class="app-content-header">
-          <!--begin::Container-->
           <div class="container-fluid">
-            <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6"><h3 class="mb-0">Dashboard</h3></div>
               <div class="col-sm-6">
@@ -105,8 +94,7 @@ $totalInvoice = $invoiceData['total'];
               </div>
             </div> <!--end::Row-->
           </div> <!--end::Container-->
-        </div>
-        <!--end::App Content Header-->
+        </div> <!--end::App Content Header-->
 
         <!-- SMALL BOX -->
         <div class="app-content">

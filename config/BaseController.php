@@ -37,6 +37,18 @@ require_once 'env.php';
         public function deleteSupplier() {
             return BASE_PATH . "/function/supplier.php?action=delete"; }
 
+        // PIC FUNCTION
+        public function formAddPic() {
+            return BASE_PATH . "/pages/pic/picForm.php"; }
+        public function formUpdatePic() {
+            return BASE_PATH . "/pages/pic/picForm.php?id="; }
+        public function addPic() {
+            return BASE_PATH . "/function/pic.php?action=add"; }
+        public function updatePic() {
+            return BASE_PATH . "/function/pic.php?action=update"; }
+        public function deletePic() {
+            return BASE_PATH . "/function/pic.php?action=delete"; }
+
         // ITEM CUSTOMER FUNCTION
         public function formAddItemCustomer() {
             return BASE_PATH . "/pages/itemCustomer/itemCustomerForm.php"; }
@@ -73,20 +85,25 @@ require_once 'env.php';
         public function deleteDetailInvoice() {
             return BASE_PATH . "/function/invoice.php?action=deleteDetail"; }
 
-        // OMSET FUNCTION
-        public function omsetByDay($whereClause) {
-            return BASE_PATH . "/function/omset.php?type=day"; }
-        public function omsetByWeek($whereClause) {
-            return BASE_PATH . "/function/omset.php?type=week"; }
-        public function omsetByMonth($whereClause) {
-            return BASE_PATH . "/function/omset.php?type=month"; }
+        // PAYMENT FUNCTION
+        public function formAddPayment() {
+            return BASE_PATH . "/pages/payment/paymentForm.php"; }
+        public function formUpdatePayment() {
+            return BASE_PATH . "/pages/payment/paymentForm.php"; }
+        public function addPayment() {
+            return BASE_PATH . "/function/payment.php?action=add&inv="; }
+        public function updatePayment() {
+            return BASE_PATH . "/function/payment.php?action=update&id="; }
+        public function deletePayment() {
+            return BASE_PATH . "/function/payment.php?action=delete"; }
 
-        // COMPONENT FUNCTION
-        public function navbar() {
-            return BASE_PATH . "/component/navbar.php"; }
-        public function sidebar() {
-            return BASE_PATH . "/component/sidebar.php"; }
-        public function notification() {
-            return BASE_PATH . "/component/notification.php"; }
+        // SETTING FUNCTION
+        public function formSettingDetail() {
+            return BASE_PATH . "/pages/setting/settingForm.php?action=detail"; }
+        public function formSettingLogo() {
+            return BASE_PATH . "/pages/setting/settingForm.php?action=logo"; }
+        public function updateSetting($update) {
+            return BASE_PATH . "/function/setting.php?action=$update";
+        }
     }
 ?>

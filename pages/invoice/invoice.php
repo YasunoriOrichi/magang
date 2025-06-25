@@ -20,18 +20,31 @@ if ($reset) {
 // Ambil daftar customer untuk selectbox
 $customers = mysqli_query($conn, "SELECT * FROM customer");
 // Bangun query invoice
-$query = "SELECT invoice.*, customer.NAME AS customerName
-          FROM invoice 
-          LEFT JOIN customer ON invoice.CUSTOMER = customer.ID 
-          WHERE 1=1";
+$query = " SELECT
+              i.*,
+              c.NAME AS customerName,
+              COALESCE((
+                  SELECT SUM(TOTAL_PRICE)
+                  FROM invoice_detail
+                  WHERE ID_DETAIL = i.ID
+              ), 0) AS TOTAL_TAGIHAN,
+              COALESCE((
+                  SELECT SUM(PAID)
+                  FROM payment
+                  WHERE INVOICE_ID = i.ID
+              ), 0) AS TOTAL_PEMBAYARAN
+          FROM invoice i
+          LEFT JOIN customer c ON i.CUSTOMER = c.ID
+          WHERE 1=1"; // 1=1 untuk memudahkan penambahan kondisi
+
 if ($keyword !== '') {
     $safeKeyword = mysqli_real_escape_string($conn, $keyword);
-    $query .= " AND invoice.INVOICE_NO LIKE '%$safeKeyword%'
-                OR customer.NAME LIKE '%$safeKeyword%'";
+    $query .= " AND i.INVOICE_NO LIKE '%$safeKeyword%'
+                OR c.NAME LIKE '%$safeKeyword%'";
 }
 if ($customer !== '') {
     $safeCustomer = (int)$customer;
-    $query .= " AND customer.ID = $safeCustomer";
+    $query .= " AND c.ID = $safeCustomer";
 }
 if ($tgl_dari !== '') {
     $safeDari = mysqli_real_escape_string($conn, $tgl_dari);
@@ -46,6 +59,11 @@ $result = mysqli_query($conn, $query);
 
 $rows = [];
 while ($row = mysqli_fetch_assoc($result)) {
+  $row['STATUS'] = ($row['TOTAL_TAGIHAN'] == 0) 
+  ? 'TIDAK ADA ITEM' 
+  : (($row['TOTAL_PEMBAYARAN'] == $row['TOTAL_TAGIHAN']) 
+      ? 'LUNAS' 
+      : 'BELUM LUNAS');
   $rows[] = $row;
 }
 
@@ -106,7 +124,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -181,9 +199,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
                 <!-- /.card -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <a href="<?= $controller->formAddInvoice() ?>" class="btn btn-primary bi-file-earmark-plus"> Tambah</a>
-                    <a href="#" class="btn btn-primary bi-printer"> Print</a>
-                    <a href="invoiceExportCSV.php" class="btn btn-primary bi-file-earmark-text"> Export CSV</a>
+                    <a href="<?= $controller->formAddInvoice() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body">
@@ -193,6 +209,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           <th style="width: 15%">Kode Invoice</th>
                           <th>Nama Kustomer</th>
                           <th style="width: 30%">Tanggal dibuat</th>
+                          <th>Status</th>
                           <th style="width: 12%">Aksi</th>
                         </tr>
                       </thead>
@@ -203,9 +220,21 @@ $paginated_data = array_slice($rows, $start, $per_page);
                             <td><?= $row['INVOICE_NO'] ?></td>
                             <td><?= $row['customerName'] ?></td>
                             <td><?= $row['DATE_INVOICE'] ?></td>
+                            <td><?= $row['STATUS'] ?></td>
                             <td>
-                            <a href="<?= $controller->detailInvoice() . $row['ID']?>" class="btn btn-primary mb-2 bi-info-circle"></a>
-                            <a href="<?= $controller->deleteInvoice() . $row['ID']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')" class="btn btn-danger mb-2 bi-trash"></a>
+                              <div class="btn-group">
+                                <a href="<?= $controller->detailInvoice() . $row['ID']?>" class="btn btn-primary">Detail</a>
+                                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                                  <span class="visually-hidden">Toggle Dropdown</span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="printInvoice.php?id=<?= $row['ID'] ?>">Preview PDF</a></li>
+                                <li><a class="dropdown-item" href="printInvoice.php?id=<?= $row['ID'] ?>&print=true">Download PDF</a></li>
+                                  <li><a class="dropdown-item" href="<?= $controller->formUpdateInvoice() . $row['ID'] ?>">Edit</a></li>
+                                  <li><hr class="dropdown-divider"></li>
+                                  <li><a class="dropdown-item" href="<?= $controller->deleteInvoice() . $row['ID']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')">Delete</a></li>
+                                </ul>
+                              </div>
                             </td>
                           </tr>
                         <?php endforeach; ?>

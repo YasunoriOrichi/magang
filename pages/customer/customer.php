@@ -82,7 +82,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-collapse bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -141,7 +141,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
                 <!-- CARD -->
                 <div class="card mb-4">
                   <div class="card-header">
-                    <a href="<?= $controller->formAddCustomer() ?>" class="btn btn-primary bi-plus-lg"> Tambah</a>
+                    <a href="<?= $controller->formAddCustomer() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
                   </div>
                   <!-- CARD HEADER -->
                   <div class="card-body">
@@ -151,6 +151,9 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           <th style="width: 5%">#</th>
                           <th style="width: 15%">Kode Kustomer</th>
                           <th>Nama Kustomer</th>
+                          <th>Alamat</th>
+                          <th>E-mail</th>
+                          <th>Nomor Telepon</th>
                           <th style="width: 14%">Aksi</th>
                         </tr>
                       </thead>
@@ -162,6 +165,9 @@ $paginated_data = array_slice($rows, $start, $per_page);
                             <td><?= $row['ID'] ?></td>
                             <td><?= $row['REF_NO'] ?></td>
                             <td><?= $row['NAME'] ?></td>
+                            <td><?= $row['ADDRESS'] ?></td>
+                            <td><?= $row['EMAIL'] ?></td>
+                            <td><?= $row['NUMBER'] ?></td>
                             <td>
                               <a href="<?= $controller->formUpdateCustomer() . $row['ID'] ?>" class="btn btn-primary bi-pencil"></a>
                               <a href="<?= $controller->deleteCustomer() . "&id=" . $row['ID']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')" class="btn btn-danger bi-trash"></a>
