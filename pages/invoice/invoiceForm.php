@@ -32,6 +32,7 @@ $customer_id     = $invoice['CUSTOMER'] ?? null;
 $invoice_no      = $invoice['INVOICE_NO'] ?? null;
 $invoice_date    = $invoice['DATE_INVOICE'] ?? null;
 $note            = $invoice['NOTE'] ?? null;
+$terms           = $invoice['TERMS'] ?? null;
 ?>
 
 <!doctype html>
@@ -74,7 +75,7 @@ $note            = $invoice['NOTE'] ?? null;
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <?php require '../../component/navbar.php'?>
 
@@ -129,11 +130,15 @@ $note            = $invoice['NOTE'] ?? null;
                           <label for="date" class="form-label">Tanggal Dibuat<b style="color: red">*</b></label>
                           <input type="date" class="form-control" id="date" name="date" value="<?= $invoice_date ?>" <?= $isEdit ? 'required' : '' ?>> 
                         </div>
-                      <!-- KETERANGAN -->
-                      <div class="mb-3" <?= $isEdit ? '' : 'hidden' ?>>
-                        <label for="note" class="form-label">Keterangan</label>
-                        <textarea type="text" class="form-control" id="note" name="note" placeholder="Masukkan keterangan invoice disini"><?= $note ?></textarea>
-                      </div>
+                        <!-- KETERANGAN -->
+                        <div class="mb-3" <?= $isEdit ? '' : 'hidden' ?>>
+                          <label for="note" class="form-label">Keterangan</label>
+                          <textarea type="text" class="form-control" id="note" name="note" placeholder="Masukkan keterangan invoice disini"><?= $note ?></textarea>
+                        </div>
+                        <div class="mb-3" <?= $isEdit ? '' : 'hidden' ?>>
+                          <label for="terms" class="form-label">Keterangan</label>
+                          <textarea type="text" class="form-control" id="terms" name="terms" placeholder="Masukkan syarat dan ketentuan invoice disini"><?= $terms ?? "Tidak ada syarat dan ketentuan" ?></textarea>
+                        </div>
                       </div>
                       <div class="card-footer">
                         <button type="submit" name="inv" value="<?= $id ?>" class="btn btn-primary">Submit</button>

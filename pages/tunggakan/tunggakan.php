@@ -6,14 +6,14 @@ $conn = getConnection();
 $activePage = 'tunggakan';
 
 // Ambil data filter dari GET
-$keyword   = $_GET['keyword']   ?? '';
+$keyword = $_GET['keyword'] ?? '';
 $customer  = $_GET['customer']  ?? '';
-$reset     = isset($_GET['reset']);
+$reset = $_GET['reset'] ?? '';
 
 // Reset: kosongkan semua
 if ($reset) {
-    $keyword = '';
-    $customer = '';
+  $keyword = '';
+  $customer = '';
 }
 
 // Ambil daftar customer untuk selectbox
@@ -21,7 +21,7 @@ $customers = mysqli_query($conn, "SELECT * FROM customer");
 
 $query = "SELECT 
               invoice.ID AS INVOICE_ID,
-              customer.NAME,
+              customer.*,
               COUNT(invoice.CUSTOMER) AS INVOICE_COUNT,
               SUM(invoice_detail.TOTAL_PRICE) AS UNPAID,
               (
@@ -34,19 +34,19 @@ $query = "SELECT
           FROM customer
           INNER JOIN invoice ON invoice.CUSTOMER = customer.ID
           LEFT JOIN invoice_detail ON invoice.ID = invoice_detail.ID_DETAIL
-          GROUP BY customer.ID ORDER BY invoice.ID ASC"; // 1=1 untuk memudahkan penambahan kondisi
+          WHERE 1=1"; // 1=1 untuk memudahkan penambahan kondisi
 
-// Bangun query invoice
-// $query = "SELECT invoice.*,
-//           customer.NAME,
-//           COUNT(invoice.CUSTOMER) AS INVOICE_COUNT,
-//           SUM(invoice_detail.TOTAL_PRICE) AS UNPAID,
-//           SUM(payment.PAID) AS TOTAL_PAID
-//           FROM invoice
-//           LEFT JOIN customer ON invoice.CUSTOMER = customer.ID
-//           LEFT JOIN invoice_detail ON invoice.ID = invoice_detail.ID_DETAIL
-//           LEFT JOIN payment ON invoice.ID = payment.INVOICE_ID
-//           GROUP BY invoice.ID"; // 1=1 untuk memudahkan penambahan kondisi
+if ($keyword !== '') {
+  $safeKeyword = mysqli_real_escape_string($conn, $keyword);
+  $query .= " AND customer.NAME LIKE '%$safeKeyword%'";
+}
+if ($customer !== '') {
+  $safeCustomer = (int)$customer;
+  $query .= " AND customer.ID = '$safeCustomer'";
+}
+
+$query .= " GROUP BY customer.ID ORDER BY invoice.ID ASC";
+
 $result = mysqli_query($conn, $query);
 $rows = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -110,7 +110,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -137,11 +137,13 @@ $paginated_data = array_slice($rows, $start, $per_page);
 
               <!-- PENCARIAN -->
               <div class="card card-primary card-outline mb-4">
-                  <form method="GET">
-                    <div class="card-body">
-                      <div class="row">
-                      <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Kata Kunci</label>
+                <form method="GET">
+                  <!-- BODY -->
+                  <div class="card-body">
+                    <div class="row">
+                      <!-- KEYWORD -->
+                      <div class="col-5">
+                        <label for="keyword" class="form-label">Kata Kunci</label>
                         <input
                           type="search"
                           name="keyword"
@@ -150,10 +152,10 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           value="<?= htmlspecialchars($keyword) ?>"
                           placeholder="Masukkan Kata Kunci..."/>
                       </div>
-                      <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Nama Kustomer</label>
+                      <div class="col-5">
+                        <label for="customer" class="form-label">Nama Kustomer</label>
                         <select name="customer" class="form-select">
-                          <option value="" <?= $customer == '' ? 'selected' : '' ?> >---- Pilih Kustomer ----</option>
+                          <option value="" <?= $customer == '' ? 'selected' : '' ?> > Pilih Kustomer </option>
                           <?php
                           while ($row = mysqli_fetch_assoc($customers)) {
                               $selected = ($customer == $row['ID']) ? 'selected' : '';
@@ -161,26 +163,21 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           }
                           ?>
                         </select>
-                        </div>
-                        <div class="col-2">
-                          <label for="" class="form-label">Dari Tanggal</label>
-                          <input type="date" class="form-control" name="tgl_dari" value="<?= htmlspecialchars($tgl_dari) ?>">
-                        </div>
-                        <div class="col-2">
-                          <label for="" class="form-label">Hingga Tanggal</label>
-                          <input type="date" class="form-control" name="tgl_ke" value="<?= htmlspecialchars($tgl_ke) ?>">
-                        </div>
-                        <div class="col-1 mb-2">
-                          <label for="" class="form-label" style="color: white;">Search</label>
-                          <button type="submit" class="btn btn-warning">Search</button>
-                          </div>
-                          <div class="col-1 mb-2">
-                            <label for="" class="mb-2" style="color: white;">reset</label>
-                          <button type="submit" name="reset" value="1" class="btn btn-secondary">Reset</button>
-                        </div>
+                      </div>
+                      <input type="hidden" name="page" value="1"> <!-- 🔧 penting: reset ke page 1 -->
+                      <!-- TOMBOL SEARCH -->
+                      <div class="col-1">
+                        <label class="form-label" style="color: white;">submit</label>
+                        <button type="submit" class="btn btn-warning"> Search</button>
+                      </div>
+                      <!-- TOMBOL RESET -->
+                      <div class="col-1">
+                      <label class="form-label" style="color: white;">reset</label>
+                        <button type="submit" name="reset" value="1" class="btn btn-secondary mb-2 "> Reset</button>
                       </div>
                     </div>
-                  </form>
+                  </div>
+                </form>
               </div>
               
               <!-- /.card -->

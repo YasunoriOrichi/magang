@@ -12,10 +12,11 @@ class Omset {
                     DATE(i.DATE_INVOICE) AS DATE,
                     SUM(d.TOTAL_PRICE) AS OMSET
                   FROM invoice i
-                  JOIN invoice_detail d ON i.ID = d.ID_DETAIL";
+                  JOIN invoice_detail d ON i.ID = d.ID_DETAIL
+                  WHERE 1=1";
     
         if (!empty($whereClause)) {
-            $query .= " WHERE $whereClause";
+            $query .= " $whereClause";
         }
     
         $query .= " GROUP BY DATE(i.DATE_INVOICE) ORDER BY DATE(i.DATE_INVOICE)";

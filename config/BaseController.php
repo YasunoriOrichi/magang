@@ -2,6 +2,26 @@
 session_start();
 require_once 'env.php';
     class BaseController {
+        // BASE PATH
+        public function index() {
+            return BASE_PATH . "/pages/dashboard/index.php"; }
+
+        // AUTHENTICATION FUNCTION
+        public function formLogin() {
+            return BASE_PATH . "/pages/auth/login.php"; }
+        public function login() {
+            return BASE_PATH . "/function/auth.php?action=login"; }
+        public function logout() {
+            return BASE_PATH . "/function/auth.php?action=logout"; }
+        public function formResetPassword() {
+            return BASE_PATH . "/pages/auth/resetPassword.php"; }
+        public function emailVerify() {
+            return BASE_PATH . "/pages/auth/mailtrap.php"; }
+        public function verifyCode() {
+            return BASE_PATH . "/function/auth.php?action=verifyCode"; }
+        public function resetPassword() {
+            return BASE_PATH . "/function/auth.php?action=resetPassword"; }
+
         // CUSTOMER FUNCTION
         public function formAddCustomer() {
             return BASE_PATH . "/pages/customer/customerForm.php"; }
@@ -13,6 +33,13 @@ require_once 'env.php';
             return BASE_PATH . "/function/customer.php?action=update"; }
         public function deleteCustomer() {
             return BASE_PATH . "/function/customer.php?action=delete"; }
+        public function customerExportCSV() {
+            return BASE_PATH . "/function/customer.php?action=exportCSV"; }
+        public function formImportCSV() {
+            return BASE_PATH . "/pages/customer/customerForm.php?imp=1"; }
+        public function customerImportCSV() {
+            return BASE_PATH . "/function/customer.php?action=importCSV"; }
+    
 
         // ITEM FUNCTION
         public function formAddItem() {
@@ -25,6 +52,7 @@ require_once 'env.php';
             return BASE_PATH . "/function/item.php?action=update"; }
         public function deleteItem() {
             return BASE_PATH . "/function/item.php?action=delete"; }
+
         // SUPPLIER FUNCTION
         public function formAddSupplier() {
             return BASE_PATH . "/pages/supplier/supplierForm.php"; }
@@ -36,18 +64,6 @@ require_once 'env.php';
             return BASE_PATH . "/function/supplier.php?action=update"; }
         public function deleteSupplier() {
             return BASE_PATH . "/function/supplier.php?action=delete"; }
-
-        // PIC FUNCTION
-        public function formAddPic() {
-            return BASE_PATH . "/pages/pic/picForm.php"; }
-        public function formUpdatePic() {
-            return BASE_PATH . "/pages/pic/picForm.php?id="; }
-        public function addPic() {
-            return BASE_PATH . "/function/pic.php?action=add"; }
-        public function updatePic() {
-            return BASE_PATH . "/function/pic.php?action=update"; }
-        public function deletePic() {
-            return BASE_PATH . "/function/pic.php?action=delete"; }
 
         // ITEM CUSTOMER FUNCTION
         public function formAddItemCustomer() {

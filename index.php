@@ -14,7 +14,17 @@ require_once ENV_PATH;
 </head>
 <body>
     <?php
-        header('Location: pages/dashboard/index.php');
+    $query = "SELECT * FROM account WHERE REMEMBER = 'true'"; // Check if there is any account with REMEMBER set to true
+    if (mysqli_fetch_assoc(mysqli_query(getConnection(), $query)) > 0) {
+        $query = "SELECT * FROM account WHERE REMEMBER = 'true'"; // Reset previous remember me status
+        $fetch = mysqli_fetch_assoc(mysqli_query(getConnection(), $query));
+        $username = $fetch['USERNAME'];
+        session_start();
+        $_SESSION['username'] = $username;
+        header("Location: pages/dashboard/index.php"); // Redirect to dashboard
+    } else {
+        header('Location: pages/auth/login.php');
+    }
     ?>
 </body>
 </html>

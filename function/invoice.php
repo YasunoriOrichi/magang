@@ -11,9 +11,7 @@ $date = $_POST['date'] ?? null;
 $qty = $_POST['jumlah'] ?? null;
 $ref_no = $_POST['kode'] ?? null;
 $note = $_POST['note'] ?? null;
-
-echo $action;
-
+$terms = $_POST['terms'] ?? null;
 
 class Invoice {
     private $conn;
@@ -71,18 +69,24 @@ class Invoice {
         }
         $total_price = $unit_price * $qty;
 
-        echo " " . $item . " " . $qty . " " . $unit_price . " " . $total_price . " " . $id_invoice;
-
-
         $insert = "INSERT INTO invoice_detail (ITEM, QTY, UNIT_PRICE, TOTAL_PRICE, ID_DETAIL)
                     VALUES ('$item', '$qty', '$unit_price', '$total_price', '$id_invoice')";
         $this->conn->query($insert);
 
+        $query = "SELECT STATUS FROM invoice WHERE ID = '$id_invoice'";
+        $result = mysqli_query($this->conn, $query);
+        $row = mysqli_fetch_assoc($result);
+        $status = $row['STATUS'];
+        if ($status == 'ITEM KOSONG') {
+            $updateStatus = "UPDATE invoice SET STATUS = 'BELUM LUNAS' WHERE ID = '$id_invoice'";
+            mysqli_query($this->conn, $updateStatus);
+        }
+
         header("Location: ../../pages/invoice/detailInvoice.php?inv=$id_invoice");
     }
 
-    public function updateInvoice($invoice_no, $customer, $date, $note, $id_invoice) {
-        $updateInvoice = mysqli_query($this->conn, "UPDATE invoice SET INVOICE_NO = '$invoice_no', CUSTOMER = '$customer', DATE_INVOICE = '$date', NOTE = '$note' WHERE ID = '$id_invoice'");
+    public function updateInvoice($invoice_no, $customer, $date, $note, $terms, $id_invoice) {
+        $updateInvoice = mysqli_query($this->conn, "UPDATE invoice SET INVOICE_NO = '$invoice_no', CUSTOMER = '$customer', DATE_INVOICE = '$date', NOTE = '$note', TERMS = '$terms' WHERE ID = '$id_invoice'");
 
         if ($updateInvoice) {
             header("Location: ../../pages/invoice/detailInvoice.php?inv=$id_invoice");
@@ -121,6 +125,14 @@ class Invoice {
     public function deleteDetailInvoice($id_detail, $id_invoice) {
         $delete = mysqli_query($this->conn, "DELETE FROM invoice_detail WHERE ID_DETAIL_ROW = '$id_detail'");
         if ($delete) {
+            $query = "SELECT COUNT(*) AS total FROM invoice_detail WHERE ID_DETAIL = '$id_invoice'";
+            $result = mysqli_query($this->conn, $query);
+            $row = mysqli_fetch_assoc($result);
+            if ($row['total'] == 0) {
+                $updateStatus = "UPDATE invoice SET STATUS = 'ITEM KOSONG' WHERE ID = '$id_invoice'";
+                mysqli_query($this->conn, $updateStatus);
+            }
+
             header("Location: ../../pages/invoice/detailInvoice.php?inv=$id_invoice");
         } else {
             echo "Gagal menghapus data invoice.";
@@ -135,7 +147,7 @@ if ($_GET['action'] == 'add') {
 } elseif ($_GET['action'] == 'addDetail') {
     $invoice->addDetailInvoice($item, $qty, $unit_price, $id_invoice);
 } elseif ($_GET['action'] == 'update') {
-    $invoice->updateInvoice($invoice_no, $customer, $date, $note, $id_invoice);
+    $invoice->updateInvoice($invoice_no, $customer, $date, $note, $terms, $id_invoice);
 } elseif ($_GET['action'] == 'updateDetail') {
     $invoice->updateDetailInvoice($item, $qty, $unit_price, $id_detail, $id_invoice);
 } elseif ($_GET['action'] == 'delete') {

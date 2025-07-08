@@ -1,6 +1,7 @@
 <?php
-require_once '../../config/env.php'; // Include file koneksi
 require_once '../../function/bestSeller.php'; // Include file controller
+require_once '../../config/BaseController.php'; // Include file koneksi
+$controller = new BaseController(); // Instance class controller
 $activePage = 'best seller'; // Set active page for sidebar
 $conn = getConnection(); // Koneksi ke database
 $bestseller = new BestSeller($conn); // Set link for add customer
@@ -51,7 +52,7 @@ $no = 1; // Inisialisasi nomor urut
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>

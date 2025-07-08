@@ -2,22 +2,37 @@
 require_once '../../config/BaseController.php'; // Include file controller
 require_once '../../function/omset.php'; // Include file koneksi
 $conn = getConnection(); // Koneksi ke database
+$controller = new BaseController(); // Instance class controller
 $omset = new Omset($conn); // Instance class omset
 $activePage = 'omset'; // Set active page for sidebar
 $id = 1; // Set id untuk tabel
 
 // 1. Ambil data dari search atau reset
-$keyword = $_GET['search'] ?? '';
+$keyword = $_GET['keyword'] ?? '';
+$tgl_dari  = $_GET['tgl_dari']  ?? '';
+$tgl_ke    = $_GET['tgl_ke']    ?? '';
 $reset = $_GET['reset'] ?? '';
 
 // Jika tombol reset ditekan, kosongkan keyword
 if ($reset) {
   $keyword = '';
+  $tgl_dari = '';
+  $tgl_ke = '';
 }
 
-// 2. Buat query untuk pencarian
-$safeKeyword = mysqli_real_escape_string($conn, $keyword);
-$whereClause = ($keyword !== '') ? "WHERE NAME LIKE '%$safeKeyword%'" : '';
+$whereClause = '';
+if ($keyword !== '') {
+  $safeKeyword = mysqli_real_escape_string($conn, $keyword);
+  $whereClause .= " AND DATE_INVOICE LIKE '%$safeKeyword%'";
+}
+if ($tgl_dari !== '') {
+  $safeDari = mysqli_real_escape_string($conn, $tgl_dari);
+  $whereClause .= " AND DATE_INVOICE >= '$safeDari'";
+}
+if ($tgl_ke !== '') {
+  $safeKe = mysqli_real_escape_string($conn, $tgl_ke);
+  $whereClause .= " AND DATE_INVOICE <= '$safeKe'";
+}
 
 $view = $_GET['view'] ?? 'day';
 switch ($view) {
@@ -87,10 +102,10 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
-      <?php require '../../component/navbar.php'?>
+      <?php require '../../component/navbar.php'; ?>
 
       <!-- SIDEBAR NAVIGATION -->
       <?php require '../../component/sidebar.php';?>
@@ -112,32 +127,45 @@ $paginated_data = array_slice($rows, $start, $per_page);
 
               <!-- PENCARIAN -->
               <div class="card card-primary card-outline mb-4">
-                  <form method="GET">
-                    <!-- BODY -->
-                    <div class="card-body">
-                      <div class="row">
-                        <div class="col-10">
-                          <label for="Input Name Search" class="form-label">Pencarian</label>
-                          <input
-                            type="search"
-                            name="search"
-                            class="form-control"
-                            id="search"
-                            value="<?= htmlspecialchars($keyword) ?>"
-                            placeholder="Masukkan Kata Kunci..."/>
-                        </div>
-                        <input type="hidden" name="page" value="1"> <!-- 🔧 penting: reset ke page 1 -->
-                        <div class="col-1">
-                          <label class="form-label" style="color: white;">submit</label>
-                          <button type="submit" class="btn btn-warning"> Search</button>
-                        </div>
-                        <div class="col-1">
-                        <label class="form-label" style="color: white;">reset</label>
-                          <button type="submit" name="reset" value="1" class="btn btn-secondary mb-2 "> Reset</button>
-                        </div>
+                <form method="GET">
+                  <!-- BODY -->
+                  <div class="card-body">
+                    <div class="row">
+                      <!-- KEYWORD -->
+                      <div class="col-4">
+                        <label for="keyword" class="form-label">Kata Kunci</label>
+                        <input
+                          type="search"
+                          name="keyword"
+                          class="form-control"
+                          id="search"
+                          value="<?= htmlspecialchars($keyword) ?>"
+                          placeholder="Masukkan Kata Kunci..."/>
+                      </div>
+                      <!-- DARI TANGGAL -->
+                      <div class="col-3">
+                          <label for="" class="form-label">Dari Tanggal</label>
+                          <input type="date" class="form-control" name="tgl_dari" value="<?= htmlspecialchars($tgl_dari) ?>">
+                      </div>
+                      <!-- HINGGA TANGGAL -->
+                      <div class="col-3">
+                          <label for="" class="form-label">Hingga Tanggal</label>
+                          <input type="date" class="form-control" name="tgl_ke" value="<?= htmlspecialchars($tgl_ke) ?>">
+                      </div>
+                      <input type="hidden" name="page" value="1"> <!-- 🔧 penting: reset ke page 1 -->
+                      <!-- TOMBOL SEARCH -->
+                      <div class="col-1">
+                        <label class="form-label" style="color: white;">submit</label>
+                        <button type="submit" class="btn btn-warning"> Search</button>
+                      </div>
+                      <!-- TOMBOL RESET -->
+                      <div class="col-1">
+                      <label class="form-label" style="color: white;">reset</label>
+                        <button type="submit" name="reset" value="1" class="btn btn-secondary mb-2 "> Reset</button>
                       </div>
                     </div>
-                  </form>
+                  </div>
+                </form>
               </div>
 
               <!-- TABEL DATA -->
@@ -150,80 +178,79 @@ $paginated_data = array_slice($rows, $start, $per_page);
                 </div>
                 <!-- CARD HEADER -->
                 <div class="card-body">
-                <table class="table table-bordered">
-                  <thead>
-                    <tr>
-                      <th style="width: 5%">#</th>
-                      <th style="width: 40%">Tanggal</th>
-                      <th>Omset</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <?php if (count($paginated_data) > 0): ?>
-                      <?php foreach ($paginated_data as $row): ?>
-                        <tr class='align-middle'>
-                          <td><?= $id ?></td>
-                          <td>
-                            <?php
-                              if ($view == 'day' || $view == null) {
-                                $tanggal = $row['DATE'];
-                                echo date("d", strtotime($tanggal)) . " " . $omset->bulanIndo(date("m", strtotime($tanggal))) . " " . date("Y", strtotime($tanggal));
-                              } elseif ($view == 'week') {
-                                $tanggalAsli = $row['start_date'];
-                                $senin = date('Y-m-d', strtotime($tanggalAsli . ' -' . (date('N', strtotime($tanggalAsli)) - 1) . ' days'));
-                                $minggu = date('Y-m-d', strtotime($senin . ' +6 days'));
-                                echo date("d", strtotime($senin)) . " " . $omset->bulanIndo(date("m", strtotime($senin))) . " - " . date("d", strtotime($minggu)) . " " . $omset->bulanIndo(date("m", strtotime($minggu))) . " " . date("Y", strtotime($minggu));
-                              } else { // bulanan
-                                $namaBulan = $omset->bulanIndo(str_pad($row['bulan'], 2, '0', STR_PAD_LEFT));
-                                echo $namaBulan . ' ' . $row['tahun'];
-                              }
-                            ?>
-                          </td>
-                          <td>Rp<?= number_format($row['OMSET'], 0, ',', '.') ?></td>
-                        </tr>
-                      <?php $id++;
-                    endforeach; ?>
-                    <?php else: ?>
-                      <tr><td colspan="3" class="text-center">Data tidak ditemukan.</td></tr>
-                    <?php endif; ?>
-                  </tbody>
-                </table>
-              </div> <!-- /.card-body -->
-            </div>
-            <!-- CARD-FOOTER -->
-            <div class="card-footer clearfix">
-                    <ul class="pagination pagination-sm m-0 float-end">
-
-                      <!-- Tombol Previous -->
-                      <?php if ($page > 1): ?>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($keyword) ?>">«</a>
-                        </li>
+                  <table class="table table-bordered">
+                    <thead>
+                      <tr>
+                        <th style="width: 5%">#</th>
+                        <th style="width: 40%">Tanggal</th>
+                        <th>Omset</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <?php if (count($paginated_data) > 0): ?>
+                        <?php foreach ($paginated_data as $row): ?>
+                          <tr class='align-middle'>
+                            <td><?= $id ?></td>
+                            <td>
+                              <?php
+                                if ($view == 'day' || $view == null) {
+                                  $tanggal = $row['DATE'];
+                                  echo date("d", strtotime($tanggal)) . " " . $omset->bulanIndo(date("m", strtotime($tanggal))) . " " . date("Y", strtotime($tanggal));
+                                } elseif ($view == 'week') {
+                                  $tanggalAsli = $row['start_date'];
+                                  $senin = date('Y-m-d', strtotime($tanggalAsli . ' -' . (date('N', strtotime($tanggalAsli)) - 1) . ' days'));
+                                  $minggu = date('Y-m-d', strtotime($senin . ' +6 days'));
+                                  echo date("d", strtotime($senin)) . " " . $omset->bulanIndo(date("m", strtotime($senin))) . " - " . date("d", strtotime($minggu)) . " " . $omset->bulanIndo(date("m", strtotime($minggu))) . " " . date("Y", strtotime($minggu));
+                                } else { // bulanan
+                                  $namaBulan = $omset->bulanIndo(str_pad($row['bulan'], 2, '0', STR_PAD_LEFT));
+                                  echo $namaBulan . ' ' . $row['tahun'];
+                                }
+                              ?>
+                            </td>
+                            <td>Rp<?= number_format($row['OMSET'], 0, ',', '.') ?></td>
+                          </tr>
+                        <?php $id++;
+                      endforeach; ?>
                       <?php else: ?>
-                        <li class="page-item disabled"><a class="page-link">«</a></li>
+                        <tr><td colspan="3" class="text-center">Data tidak ditemukan.</td></tr>
                       <?php endif; ?>
+                    </tbody>
+                  </table>
+                </div>
+              <!-- CARD-FOOTER -->
+              <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-end">
 
-                      <!-- Nomor Halaman -->
-                      <?php
-                        for ($i = 1; $i <= $total_pages; $i++) {
-                          if ($i == $page) {
-                            echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
-                          } else {
-                            echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
-                          }
-                        }
-                      ?>
+                <!-- Tombol Previous -->
+                <?php if ($page > 1): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($keyword) ?>">«</a>
+                  </li>
+                <?php else: ?>
+                  <li class="page-item disabled"><a class="page-link">«</a></li>
+                <?php endif; ?>
 
-                      <!-- Tombol Next -->
-                      <?php if ($page < $total_pages): ?>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($keyword) ?>">»</a>
-                        </li>
-                      <?php else: ?>
-                        <li class="page-item disabled"><a class="page-link">»</a></li>
-                      <?php endif; ?>
+                <!-- Nomor Halaman -->
+                <?php
+                  for ($i = 1; $i <= $total_pages; $i++) {
+                    if ($i == $page) {
+                      echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
+                    } else {
+                      echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
+                    }
+                  }
+                ?>
 
-                  </ul> <!-- PAGINATION -->
+                <!-- Tombol Next -->
+                <?php if ($page < $total_pages): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($keyword) ?>">»</a>
+                  </li>
+                <?php else: ?>
+                  <li class="page-item disabled"><a class="page-link">»</a></li>
+                <?php endif; ?>
+
+              </ul> <!-- PAGINATION -->
             </div> <!-- /.CARD-FOOTER -->
           </div> <!-- /.card -->
         </div> <!--end::Row-->

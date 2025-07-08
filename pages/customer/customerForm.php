@@ -4,6 +4,7 @@ $controller = new BaseController();
 $conn = getConnection();
 
 $isEdit = false;
+$import = false;
 
 if (isset($_GET['id'])) {
     $isEdit = true;
@@ -16,8 +17,12 @@ if (isset($_GET['id'])) {
   $title = "Tambah Kustomer";
 }
 
+if (isset($_GET['imp'])) {
+    $import = true;
+}
+
 ?>
-<!doctype html>
+<!DOCTYPE HTML>
 <html lang="en">
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -57,15 +62,14 @@ if (isset($_GET['id'])) {
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
-
       <!-- NAVIGATION BAR -->
-      <?php require '../../component/navbar.php'?>
+      <?php require '../../component/navbar.php';?>
 
       <!-- SIDEBAR NAVIGATION -->
       <?php $activePage = 'customer';
-      require '../../component/sidebar.php'?>
+      require '../../component/sidebar.php';?>
 
       <!-- MAIN CONTENT -->
       <main class="app-main">
@@ -82,13 +86,16 @@ if (isset($_GET['id'])) {
                 </ol>
               </div>
             </div> <!--end::Row-->
-            <?php require '../../component/notification.php'?>
+            <?php require '../../component/notification.php';?>
 
             <!-- FORM KUSTOMER -->
             <div class="container-fluid">
               <div class="row">
                 <div class="card card-primary card-outline mb-4">
                   <div class="card-header"><div class="card-title"><?= $title ?></div></div>
+
+                  <?php if (!$import) : ?>
+
                   <form action="<?= $isEdit ? $controller->updateCustomer() : $controller->addCustomer() ?>" method="POST">
                     <?php if ($isEdit): ?>
                       <input type="hidden" name="id" value="<?= $id ?>">
@@ -119,6 +126,23 @@ if (isset($_GET['id'])) {
                       <button type="submit" name="action" value="<?= $isEdit ? 'update' : 'add' ?>" class="btn btn-primary">Submit</button>
                     </div> <!--end::Footer-->
                   </form> <!--end::Form-->
+
+                  <?php else: ?>
+
+                  <form action="<?= $controller->customerImportCSV() ?>" method="POST" enctype="multipart/form-data">
+                    <div class="card-body">
+                      <div class="mb-3 ">
+                        <label for="import" class="form-label">Upload Logo Perusahaan:</label><br>
+                        <input type="file" name="import" accept=".csv" class="form-control" required>
+                      </div>
+                    </div>
+                    <div class="card-footer">
+                      <button type="submit" class="btn btn-primary">Import CSV</button>
+                    </div>
+                  </form>
+
+                  <?php endif; ?>
+
                 </div> <!-- CARD -->
               </div>
             </div>

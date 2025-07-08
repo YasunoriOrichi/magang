@@ -7,6 +7,7 @@ $ref_no = $_POST['kode'] ?? null;
 $address = $_POST['address'] ?? null;
 $email = $_POST['email'] ?? null;
 $number = $_POST['number'] ?? null;
+$file = $_FILES['import']['tmp_name'] ?? null;
 
 class Customer {
     private $conn;
@@ -75,6 +76,71 @@ class Customer {
         }
     }
 
+    public function exportCSV() {
+        $query = "SELECT * FROM customer ORDER BY NAME ASC";
+        $result = $this->conn->query($query);
+    
+        if ($result->num_rows > 0) {
+            ob_clean(); // Bersihkan output buffer sebelum mengirim header CSV
+            header('Content-Type: text/csv; charset=utf-8');
+            header('Content-Disposition: attachment; filename="customer.csv"');
+    
+            $output = fopen('php://output', 'w');
+    
+            // Tulis header kolom
+            fputcsv($output, ['No', 'Nomor Referal', 'Nama', 'Alamat', 'No. Telp'], ';');
+    
+            $no = 1;
+            while ($row = $result->fetch_assoc()) {
+                fputcsv($output, [
+                    $no++,
+                    $row['REF_NO'],
+                    $row['NAME'],
+                    $row['ADDRESS'],
+                    $row['NUMBER']
+                ], ';');
+            }
+    
+            fclose($output);
+            exit;
+        } else {
+            echo "Tidak ada data Kostumer.";
+        }
+    }
+
+    public function importCSV($file) {
+        if ($file > 0) {
+            $handle = fopen($file, "r");
+            $isHeader = true;
+    
+            while (($data = fgetcsv($handle, 1000, ";")) !== FALSE) {
+                if ($isHeader) {
+                    $isHeader = false;
+                    continue;
+                }
+    
+                // Kolom sesuai urutan CSV kamu:
+                // 0 = No, 1 = Nomor Refi, 2 = Nama, 3 = Alamat, 4 = No. Telp
+                $kode_ref = trim($data[0]);
+                $nama     = trim($data[1]);
+                $alamat   = trim($data[2]);
+                $telp     = trim($data[3]);
+    
+                // Cek jika semua data valid (misalnya nama tidak kosong)
+                if ($nama !== "") {
+                    $stmt = $this->conn->prepare("INSERT INTO customer (REF_NO, NAME, ADDRESS, NUMBER) VALUES (?, ?, ?, ?)");
+                    $stmt->bind_param("ssss", $kode_ref, $nama, $alamat, $telp);
+                    $stmt->execute();
+                }
+            }
+    
+            fclose($handle);
+            $_SESSION['alert'] = 'imported';
+            header("Location: ../../pages/customer/customer.php");
+        } else {
+            echo "File kosong!";
+        }
+    }
 }
 
 $customer = new Customer();
@@ -85,6 +151,10 @@ if ($_GET['action'] == 'add') {
     $customer->updateCustomer($id, $name, $ref_no, $address, $email, $number);
 } elseif ($_GET['action'] == 'delete') {
     $customer->deleteCustomer($id);
+} elseif ($_GET['action'] == 'exportCSV') {
+    $customer->exportCSV();
+} elseif ($_GET['action'] == 'importCSV') {
+    $customer->importCSV($file);
 } else {
     header("Location: ../../pages/customer/customer.php");
 }

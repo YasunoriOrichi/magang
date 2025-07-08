@@ -65,8 +65,8 @@
       <label><b>Tagihan Untuk</b></label><br>
       <hr class="line">
       <label><?= strtoupper($customer) ?></label><br>
-      <label>Telp: <?= $client['NUMBER'] ?></label><br>
-      <label>Email: <?= $client['EMAIL'] ?></label>
+      <label>Telp: <?= $client['NUMBER'] ?? 'Tidak ada nomor telepon' ?></label><br>
+      <label>Email: <?= $client['EMAIL'] ?? 'Tidak ada E-mail' ?></label>
     </td>
   </tr>
 </table>

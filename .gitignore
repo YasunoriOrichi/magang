@@ -1,0 +1,9 @@
+# Abaikan env
+config/env.php
+
+# Abaikan file
+schema.sql
+
+# Abaikan folder
+NOT INCLUDE/
+dist/pages/

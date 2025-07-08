@@ -6,14 +6,16 @@ $conn = getConnection();
 $activePage = 'payment';
 
 // Ambil data filter dari GET
-$keyword   = $_GET['keyword']   ?? '';
-$customer  = $_GET['customer']  ?? '';
-$reset     = isset($_GET['reset']);
+$keyword = $_GET['keyword'] ?? '';
+$tgl_dari  = $_GET['tgl_dari']  ?? '';
+$tgl_ke    = $_GET['tgl_ke']    ?? '';
+$reset = $_GET['reset'] ?? '';
 
 // Reset: kosongkan semua
 if ($reset) {
-    $keyword = '';
-    $customer = '';
+  $keyword = '';
+  $tgl_dari = '';
+  $tgl_ke = '';
 }
 
 // Ambil daftar customer untuk selectbox
@@ -25,6 +27,20 @@ $query = "SELECT p.*,
           FROM payment p
           JOIN invoice i ON p.INVOICE_ID = i.ID
           WHERE 1=1"; // 1=1 untuk memudahkan penambahan kondisi
+
+if ($keyword !== '') {
+  $safeKeyword = mysqli_real_escape_string($conn, $keyword);
+  $query .= " AND i.INVOICE_NO LIKE '%$safeKeyword%'";
+}
+if ($tgl_dari !== '') {
+  $safeDari = mysqli_real_escape_string($conn, $tgl_dari);
+  $query .= " AND p.PAYMENT_DATE >= '$safeDari'";
+}
+if ($tgl_ke !== '') {
+  $safeKe = mysqli_real_escape_string($conn, $tgl_ke);
+  $query .= " AND p.PAYMENT_DATE <= '$safeKe'";
+}
+
 $result = mysqli_query($conn, $query);
 $rows = [];
 while ($row = mysqli_fetch_assoc($result)) {
@@ -88,7 +104,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -115,11 +131,13 @@ $paginated_data = array_slice($rows, $start, $per_page);
 
               <!-- PENCARIAN -->
               <div class="card card-primary card-outline mb-4">
-                  <form method="GET">
-                    <div class="card-body">
-                      <div class="row">
-                      <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Kata Kunci</label>
+                <form method="GET">
+                  <!-- BODY -->
+                  <div class="card-body">
+                    <div class="row">
+                      <!-- KEYWORD -->
+                      <div class="col-4">
+                        <label for="keyword" class="form-label">Kata Kunci</label>
                         <input
                           type="search"
                           name="keyword"
@@ -128,33 +146,26 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           value="<?= htmlspecialchars($keyword) ?>"
                           placeholder="Masukkan Kata Kunci..."/>
                       </div>
+                      <!-- DARI TANGGAL -->
                       <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Nama Kustomer</label>
-                        <select name="customer" class="form-select">
-                          <option value="" <?= $customer == '' ? 'selected' : '' ?> >---- Pilih Kustomer ----</option>
-                          <?php
-                          while ($row = mysqli_fetch_assoc($customers)) {
-                              $selected = ($customer == $row['ID']) ? 'selected' : '';
-                              echo "<option value='" . $row['ID'] . "' $selected>" . htmlspecialchars($row['NAME']) . "</option>";
-                          }
-                          ?>
-                        </select>
-                        </div>
-                        <div class="col-2">
                           <label for="" class="form-label">Dari Tanggal</label>
                           <input type="date" class="form-control" name="tgl_dari" value="<?= htmlspecialchars($tgl_dari) ?>">
-                        </div>
-                        <div class="col-2">
+                      </div>
+                      <!-- HINGGA TANGGAL -->
+                      <div class="col-3">
                           <label for="" class="form-label">Hingga Tanggal</label>
                           <input type="date" class="form-control" name="tgl_ke" value="<?= htmlspecialchars($tgl_ke) ?>">
-                        </div>
-                        <div class="col-1 mb-2">
-                          <label for="" class="form-label" style="color: white;">Search</label>
-                          <button type="submit" class="btn btn-warning">Search</button>
-                        </div>
-                        <div class="col-1 mb-2">
-                          <label for="" class="mb-2" style="color: white;">reset</label>
-                        <button type="submit" name="reset" value="1" class="btn btn-secondary">Reset</button>
+                      </div>
+                      <input type="hidden" name="page" value="1"> <!-- 🔧 penting: reset ke page 1 -->
+                      <!-- TOMBOL SEARCH -->
+                      <div class="col-1">
+                        <label class="form-label" style="color: white;">submit</label>
+                        <button type="submit" class="btn btn-warning"> Search</button>
+                      </div>
+                      <!-- TOMBOL RESET -->
+                      <div class="col-1">
+                      <label class="form-label" style="color: white;">reset</label>
+                        <button type="submit" name="reset" value="1" class="btn btn-secondary mb-2 "> Reset</button>
                       </div>
                     </div>
                   </div>

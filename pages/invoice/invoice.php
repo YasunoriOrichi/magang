@@ -9,6 +9,7 @@ $keyword   = $_GET['keyword']   ?? '';
 $customer  = $_GET['customer']  ?? '';
 $tgl_dari  = $_GET['tgl_dari']  ?? '';
 $tgl_ke    = $_GET['tgl_ke']    ?? '';
+$status   = $_GET['status']    ?? '';
 $reset     = isset($_GET['reset']);
 // Reset: kosongkan semua
 if ($reset) {
@@ -16,23 +17,14 @@ if ($reset) {
     $customer = '';
     $tgl_dari = '';
     $tgl_ke = '';
+    $status = '';
 }
 // Ambil daftar customer untuk selectbox
 $customers = mysqli_query($conn, "SELECT * FROM customer");
 // Bangun query invoice
 $query = " SELECT
               i.*,
-              c.NAME AS customerName,
-              COALESCE((
-                  SELECT SUM(TOTAL_PRICE)
-                  FROM invoice_detail
-                  WHERE ID_DETAIL = i.ID
-              ), 0) AS TOTAL_TAGIHAN,
-              COALESCE((
-                  SELECT SUM(PAID)
-                  FROM payment
-                  WHERE INVOICE_ID = i.ID
-              ), 0) AS TOTAL_PEMBAYARAN
+              c.NAME AS customerName
           FROM invoice i
           LEFT JOIN customer c ON i.CUSTOMER = c.ID
           WHERE 1=1"; // 1=1 untuk memudahkan penambahan kondisi
@@ -54,16 +46,21 @@ if ($tgl_ke !== '') {
     $safeKe = mysqli_real_escape_string($conn, $tgl_ke);
     $query .= " AND DATE_INVOICE <= '$safeKe'";
 }
+if ($status !== '') {
+    // Tambahkan kondisi status jika diperlukan
+    if ($status === 'LUNAS') {
+        $query .= " AND STATUS = 'LUNAS'";
+    } elseif ($status === 'BELUM LUNAS') {
+        $query .= " AND STATUS = 'BELUM LUNAS'";
+    } elseif ($status === 'ITEM KOSONG') {
+        $query .= " AND STATUS = 'ITEM KOSONG'";
+    }
+}
 $query .= " ORDER BY DATE_INVOICE DESC";
 $result = mysqli_query($conn, $query);
 
 $rows = [];
 while ($row = mysqli_fetch_assoc($result)) {
-  $row['STATUS'] = ($row['TOTAL_TAGIHAN'] == 0) 
-  ? 'TIDAK ADA ITEM' 
-  : (($row['TOTAL_PEMBAYARAN'] == $row['TOTAL_TAGIHAN']) 
-      ? 'LUNAS' 
-      : 'BELUM LUNAS');
   $rows[] = $row;
 }
 
@@ -124,7 +121,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -148,13 +145,13 @@ $paginated_data = array_slice($rows, $start, $per_page);
             </div> <!--end::Row-->
             <?php include '../../component/notification.php'; ?>
 
-                <!-- PENCARIAN -->
-                <div class="card card-primary card-outline mb-4">
-                  <form method="GET">
-                    <div class="card-body">
-                      <div class="row">
-                      <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Kata Kunci</label>
+            <!-- PENCARIAN -->
+            <div class="card card-primary card-outline mb-4">
+              <form method="GET">
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-2">
+                        <label for="keyword" class="form-label">Kata Kunci</label>
                         <input
                           type="search"
                           name="keyword"
@@ -163,10 +160,10 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           value="<?= htmlspecialchars($keyword) ?>"
                           placeholder="Masukkan Kata Kunci..."/>
                       </div>
-                      <div class="col-3">
-                        <label for="exampleInputEmail1" class="form-label">Nama Kustomer</label>
+                      <div class="col-2">
+                        <label for="customer" class="form-label">Nama Kustomer</label>
                         <select name="customer" class="form-select">
-                          <option value="" <?= $customer == '' ? 'selected' : '' ?> >---- Pilih Kustomer ----</option>
+                          <option value="" <?= $customer == '' ? 'selected' : '' ?> > Pilih Kustomer </option>
                           <?php
                           while ($row = mysqli_fetch_assoc($customers)) {
                               $selected = ($customer == $row['ID']) ? 'selected' : '';
@@ -183,102 +180,111 @@ $paginated_data = array_slice($rows, $start, $per_page);
                           <label for="" class="form-label">Hingga Tanggal</label>
                           <input type="date" class="form-control" name="tgl_ke" value="<?= htmlspecialchars($tgl_ke) ?>">
                         </div>
+                        <div class="col-2">
+                        <label for="status" class="form-label">Status</label>
+                        <select name="status" class="form-select">
+                          <option value="" selected=""> Pilih Status </option>
+                          <option value="LUNAS" <?= $status === 'LUNAS' ? 'selected' : '' ?>>LUNAS</option>
+                          <option value="BELUM LUNAS" <?= $status === 'BELUM LUNAS' ? 'selected' : '' ?>>BELUM LUNAS</option>
+                          <option value="ITEM KOSONG" <?= $status === 'ITEM KOSONG' ? 'selected' : '' ?>>ITEM KOSONG</option>
+                          ?>
+                        </select>
+                        </div>
                         <div class="col-1 mb-2">
                           <label for="" class="form-label" style="color: white;">Search</label>
                           <button type="submit" class="btn btn-warning">Search</button>
-                          </div>
-                          <div class="col-1 mb-2">
-                            <label for="" class="mb-2" style="color: white;">reset</label>
-                          <button type="submit" name="reset" value="1" class="btn btn-secondary">Reset</button>
                         </div>
-                      </div>
+                        <div class="col-1 mb-2">
+                          <label for="" class="mb-2" style="color: white;">reset</label>
+                          <button type="submit" name="reset" value="1" class="btn btn-secondary">Reset</button>
                     </div>
-                  </form>
+                  </div>
                 </div>
-              
-                <!-- /.card -->
-                <div class="card mb-4">
-                  <div class="card-header">
-                    <a href="<?= $controller->formAddInvoice() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
-                  </div>
-                  <!-- /.card-header -->
-                  <div class="card-body">
-                    <table class="table table-bordered">
-                      <thead>
-                        <tr>
-                          <th style="width: 15%">Kode Invoice</th>
-                          <th>Nama Kustomer</th>
-                          <th style="width: 30%">Tanggal dibuat</th>
-                          <th>Status</th>
-                          <th style="width: 12%">Aksi</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                      <?php if (count($paginated_data) > 0): ?>
-                        <?php foreach ($paginated_data as $row): ?>
-                          <tr class='align-middle'>
-                            <td><?= $row['INVOICE_NO'] ?></td>
-                            <td><?= $row['customerName'] ?></td>
-                            <td><?= $row['DATE_INVOICE'] ?></td>
-                            <td><?= $row['STATUS'] ?></td>
-                            <td>
-                              <div class="btn-group">
-                                <a href="<?= $controller->detailInvoice() . $row['ID']?>" class="btn btn-primary">Detail</a>
-                                <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+              </form>
+            </div>
+          
+            <!-- /.card -->
+            <div class="card mb-4">
+              <div class="card-header">
+                <a href="<?= $controller->formAddInvoice() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+                <table class="table table-bordered">
+                  <thead>
+                    <tr>
+                      <th style="width: 15%">Kode Invoice</th>
+                      <th>Nama Kustomer</th>
+                      <th style="width: 30%">Tanggal dibuat</th>
+                      <th>Status</th>
+                      <th style="width: 14%">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  <?php if (count($paginated_data) > 0): ?>
+                    <?php foreach ($paginated_data as $row): ?>
+                      <tr class='align-middle'>
+                        <td><?= $row['INVOICE_NO'] ?></td>
+                        <td><?= $row['customerName'] ?></td>
+                        <td><?= $row['DATE_INVOICE'] ?></td>
+                        <td><?= $row['STATUS'] ?></td>
+                        <td>
+                          <div class="btn-group">
+                            <a href="<?= $controller->detailInvoice() . $row['ID']?>" class="btn btn-primary bi-info-circle"> Detail</a>
+                            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                                   <span class="visually-hidden">Toggle Dropdown</span>
-                                </button>
-                                <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="printInvoice.php?id=<?= $row['ID'] ?>">Preview PDF</a></li>
-                                <li><a class="dropdown-item" href="printInvoice.php?id=<?= $row['ID'] ?>&print=true">Download PDF</a></li>
-                                  <li><a class="dropdown-item" href="<?= $controller->formUpdateInvoice() . $row['ID'] ?>">Edit</a></li>
-                                  <li><hr class="dropdown-divider"></li>
-                                  <li><a class="dropdown-item" href="<?= $controller->deleteInvoice() . $row['ID']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')">Delete</a></li>
-                                </ul>
-                              </div>
-                            </td>
-                          </tr>
-                        <?php endforeach; ?>
-                      <?php else: ?>
-                        <tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>
-                      <?php endif; ?>
-                      </tbody>
-                    </table>
-                  </div>
-                </div> <!-- /.card-body -->
-                <!-- CARD-FOOTER -->
+                            </button>
+                            <ul class="dropdown-menu">
+                              <li><a class="dropdown-item bi-pencil-square" href="<?= $controller->formUpdateInvoice() . $row['ID'] ?>"> Edit</a></li>
+                              <li><a class="dropdown-item bi-trash" href="<?= $controller->deleteInvoice() . $row['ID']?>" onclick="return confirm('Apakah kamu yakin ingin menghapus data ini?')"> Delete</a></li>
+                              <li><hr class="dropdown-divider"></li>
+                              <li><a class="dropdown-item bi-file-earmark-pdf" href="printInvoice.php?id=<?= $row['ID'] ?>"> Preview PDF</a></li>
+                              <li><a class="dropdown-item bi-file-earmark-arrow-down" href="printInvoice.php?id=<?= $row['ID'] ?>&print=true"> Download PDF</a></li>
+                            </ul>
+                          </div>
+                        </td>
+                      </tr>
+                    <?php endforeach; ?>
+                  <?php else: ?>
+                    <tr><td colspan='4' class='text-center px-4 py-2'>Tidak ada data</td></tr>
+                  <?php endif; ?>
+                  </tbody>
+                </table>
+              </div>
+            <!-- CARD-FOOTER -->
             <div class="card-footer clearfix">
-                  <ul class="pagination pagination-sm m-0 float-end">
+              <ul class="pagination pagination-sm m-0 float-end">
 
-                      <!-- Tombol Previous -->
-                      <?php if ($page > 1): ?>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($keyword) ?>">«</a>
-                        </li>
-                      <?php else: ?>
-                        <li class="page-item disabled"><a class="page-link">«</a></li>
-                      <?php endif; ?>
+                <!-- Tombol Previous -->
+                <?php if ($page > 1): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($keyword) ?>">«</a>
+                  </li>
+                <?php else: ?>
+                  <li class="page-item disabled"><a class="page-link">«</a></li>
+                <?php endif; ?>
 
-                      <!-- Nomor Halaman -->
-                      <?php
-                        for ($i = 1; $i <= $total_pages; $i++) {
-                          if ($i == $page) {
-                            echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
-                          } else {
-                            echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
-                          }
-                        }
-                      ?>
+                <!-- Nomor Halaman -->
+                <?php
+                  for ($i = 1; $i <= $total_pages; $i++) {
+                    if ($i == $page) {
+                      echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
+                    } else {
+                      echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
+                    }
+                  }
+                ?>
 
-                      <!-- Tombol Next -->
-                      <?php if ($page < $total_pages): ?>
-                        <li class="page-item">
-                          <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($keyword) ?>">»</a>
-                        </li>
-                      <?php else: ?>
-                        <li class="page-item disabled"><a class="page-link">»</a></li>
-                      <?php endif; ?>
+                <!-- Tombol Next -->
+                <?php if ($page < $total_pages): ?>
+                  <li class="page-item">
+                    <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($keyword) ?>">»</a>
+                  </li>
+                <?php else: ?>
+                  <li class="page-item disabled"><a class="page-link">»</a></li>
+                <?php endif; ?>
 
-                    </ul>
+              </ul>
             </div> <!-- /.CARD-FOOTER -->
           </div> <!--end::Container-->
         </div> <!--end::Container-->

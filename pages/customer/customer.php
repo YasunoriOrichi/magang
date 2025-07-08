@@ -15,10 +15,14 @@ if ($reset) {
 
 // 2. Buat query untuk pencarian
 $safeKeyword = mysqli_real_escape_string($conn, $keyword);
-$whereClause = ($keyword !== '') ? "WHERE NAME LIKE '%$safeKeyword%'" : '';
+$whereClause = ($keyword !== '') ? "AND NAME LIKE '%$safeKeyword%'
+                                    OR REF_NO LIKE '%$safeKeyword%'
+                                    OR ADDRESS LIKE '%$safeKeyword%'
+                                    OR EMAIL LIKE '%$safeKeyword%'
+                                    OR NUMBER LIKE '%$safeKeyword%'" : '';
 
 // 3. Ambil semua data dari database berdasarkan pencarian
-$data = mysqli_query($conn, "SELECT * FROM customer $whereClause");
+$data = mysqli_query($conn, "SELECT * FROM customer WHERE 1=1 $whereClause");
 
 // 4. Simpan data ke dalam array
 $rows = [];
@@ -28,6 +32,8 @@ while ($row = mysqli_fetch_assoc($data)) {
 
 // 5. Pagination
 // 5.1 Hitung total data
+$range = 2;
+$dotShown = false;
 $per_page = 20; // Jumlah data per halaman
 $total_data = count($rows);
 $total_pages = ceil($total_data / $per_page);
@@ -82,7 +88,7 @@ $paginated_data = array_slice($rows, $start, $per_page);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -140,8 +146,20 @@ $paginated_data = array_slice($rows, $start, $per_page);
                 <!-- TABEL DATA -->
                 <!-- CARD -->
                 <div class="card mb-4">
-                  <div class="card-header">
-                    <a href="<?= $controller->formAddCustomer() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
+                  <div class="card-header row">
+                    <div class="col text-start">
+                      <a href="<?= $controller->formAddCustomer() ?>" class="btn btn-primary bi-plus-circle"> Tambah</a>
+                    </div>
+                    <div class="col text-end">
+                      <div class="btn-group">
+                      <button type="button" class="btn btn-primary bi-file-excel dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                        CSV
+                      </button>
+                      <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="<?= $controller->customerExportCSV() ?>"> Export CSV</a></li>
+                        <li><a class="dropdown-item" href="<?= $controller->formImportCSV() ?>"> Import CSV</a></li>
+                      </ul>
+                    </div>                    </div>
                   </div>
                   <!-- CARD HEADER -->
                   <div class="card-body">
@@ -193,15 +211,12 @@ $paginated_data = array_slice($rows, $start, $per_page);
                       <?php endif; ?>
 
                       <!-- Nomor Halaman -->
-                      <?php
-                        for ($i = 1; $i <= $total_pages; $i++) {
-                          if ($i == $page) {
-                            echo "<li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
-                          } else {
-                            echo "<li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
-                          }
-                        }
-                      ?>
+                      <?php for ($i = 1; $i <= $total_pages; $i++): ?>
+                        <?php if ($i == $page): ?>
+                          <li class='page-item active'><a class='page-link' href='#'>$i</a></li>";
+                        <?php else: ?>
+                          <li class='page-item'><a class='page-link' href='?page=$i&search=" . urlencode($keyword) . "'>$i</a></li>";
+                      <?php endif; endfor;?>
 
                       <!-- Tombol Next -->
                       <?php if ($page < $total_pages): ?>
@@ -212,14 +227,14 @@ $paginated_data = array_slice($rows, $start, $per_page);
                         <li class="page-item disabled"><a class="page-link">»</a></li>
                       <?php endif; ?>
 
-                  </ul> <!-- PAGINATION -->
-                </div> <!-- /.CARD-FOOTER -->
-              </div> <!-- /.card -->
-            </div> <!--end::Row-->
-          </div> <!-- Container -->
-        </div> <!-- App Content Header -->
-      </main> <!-- App Main -->
-    </div> <!-- APP WRAPPER -->
+                    </ul> <!-- PAGINATION -->
+                  </div> <!-- /.CARD-FOOTER -->
+                </div> <!-- /.card -->
+              </div> <!--end::Row-->
+            </div> <!-- Container -->
+          </div> <!-- App Content Header -->
+        </main> <!-- App Main -->
+      </div> <!-- APP WRAPPER -->
 
     <!--begin::Third Party Plugin(OverlayScrollbars)-->
     <script

@@ -58,7 +58,7 @@ $row = $result->fetch_assoc();
     }
     </style>
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
@@ -76,10 +76,10 @@ $row = $result->fetch_assoc();
               <div class="container-fluid">
               <?php include '../../component/notification.php'; ?>
               </div>
-              <div class="col-sm-6"><h3 class="mb-0">Pengaturan Perusahaan</h3></div>
+              <div class="col-sm-6"><h3 class="mb-0">Profil Perusahaan</h3></div>
               <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-end">
-                  <li class="breadcrumb-item active" aria-current="page">Pengaturan Perusahaan</li>
+                  <li class="breadcrumb-item active" aria-current="page">Profil Perusahaan</li>
                 </ol>
               </div>
             </div>

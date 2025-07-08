@@ -47,7 +47,7 @@ $row = mysqli_fetch_assoc($result);
     <link rel="stylesheet" href="../../../dist/css/adminlte.css" />
     <!--end::Required Plugin(AdminLTE)-->
   </head>
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
 
       <!-- NAVIGATION BAR -->
@@ -119,7 +119,7 @@ $row = mysqli_fetch_assoc($result);
                     <div class="card-body">
                         <div class="mb-3 ">
                             <label for="logo" class="form-label">Upload Logo Perusahaan:</label><br>
-                            <input type="file" name="logo" accept="image/*" class="form-control" value="<?= $row['COMPANY_LOGO'] ?>" required>
+                            <input type="file" name="logo" accept="image/*" class="form-control" required>
                             <h6>Disarankan: 500 x 500</h6>
                         </div>
                         <div class="mb-3 ">
@@ -128,7 +128,7 @@ $row = mysqli_fetch_assoc($result);
                         </div>
                     </div>
                     <div class="card-footer">
-                        <button type="submit" class="btn btn-primary">Simpan Logo</button>
+                      <button type="submit" class="btn btn-primary">Simpan Logo</button>
                     </div>
                   </form> <!--end::Form-->
                 </div> <!-- CARD -->

@@ -1,17 +1,17 @@
 <?php
 $query = "SELECT * FROM setting";
 $result = $conn->query($query);
-$row = $result->fetch_assoc();
+$sidebar_query = $result->fetch_assoc();
 ?>
       <aside class="app-sidebar bg-body-secondary shadow" data-bs-theme="dark">
         <div class="sidebar-brand">
           <a href="../dashboard/index.php" class="brand-link">
             <img
-              src="<?= BASE_PATH . $row['COMPANY_LOGO'] ?>"
+              src="<?= BASE_PATH . $sidebar_query['COMPANY_LOGO'] ?>"
               alt="AdminLTE Logo"
               class="brand-image opacity-75 shadow"
             />
-            <span class="brand-text fw-light"><?= $row['COMPANY_NAME'] ?></span>
+            <span class="brand-text fw-light"><?= $sidebar_query['COMPANY_NAME'] ?></span>
           </a>
         </div>
         <div class="sidebar-wrapper">

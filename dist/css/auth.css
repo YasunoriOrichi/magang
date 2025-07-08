@@ -1,0 +1,8 @@
+body {
+  background-image: url('../../dist/assets/img/background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* pastikan tinggi penuh */
+  margin: 0;
+}

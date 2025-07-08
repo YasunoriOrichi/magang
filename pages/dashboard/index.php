@@ -72,7 +72,7 @@ $totalInvoice = $invoiceData['total'];
     <!--end::Required Plugin(AdminLTE)-->
   </head>
   <!--end::Head-->
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
+  <body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
     <div class="app-wrapper">
       <?php require '../../component/navbar.php'?>
 
@@ -93,6 +93,7 @@ $totalInvoice = $invoiceData['total'];
                 </ol>
               </div>
             </div> <!--end::Row-->
+            <?php require_once '../../component/notification.php' ?>
           </div> <!--end::Container-->
         </div> <!--end::App Content Header-->
 

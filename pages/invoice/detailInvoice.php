@@ -27,6 +27,8 @@ if ($invoice_result->num_rows > 0) {
     $invoice_no = $row['INVOICE_NO'];  // kode invoice yang akan ditampilkan di form
     $invoice_date = $row['DATE_INVOICE'];  // Tanggal invoice yang akan ditampilkan di form
     $note = $row['NOTE'];  // Keterangan invoice yang akan ditampilkan di form
+    $terms = $row['TERMS'];  // Syarat dan ketentuan invoice yang akan ditampilkan di form
+    $termsList = explode("\n", $terms); // Pecah berdasarkan baris
 }
 
 // CUSTOMER
@@ -122,8 +124,8 @@ $payment = $payment_result->fetch_assoc();
     }
   </style>
 
-  <body class="layout-fixed sidebar-expand-lg sidebar-open bg-body-tertiary">
-    <div class="app-wrapper">
+<body class="layout-fixed sidebar-expand-lg sidebar-mini sidebar-open bg-body-tertiary">
+<div class="app-wrapper">
       <!-- NAVIGATION BAR -->
       <?php require '../../component/navbar.php'?>
 
@@ -151,6 +153,11 @@ $payment = $payment_result->fetch_assoc();
             <div class="container-fluid">
               <div class="row">
                 <div class="card card-primary card-outline mb-4">
+                  <div class="card-header">
+                    <div class="card-title">
+                      <a name="id" href="<?= BASE_PATH . "/pages/invoice/invoice.php" ?>" class="btn btn-primary bi-arrow-left"> Kembali</a>
+                    </div>
+                  </div>
                   <!-- BODY -->
                   <div class="card-body">
                     <div class="row">
@@ -263,13 +270,14 @@ $payment = $payment_result->fetch_assoc();
                     <div class="col">
                       <div class="row mb-5">
                         <label><b>KETERANGAN:</b></label><hr class="line">
-                        <label><?= $note ?? 'Tidak ada keterangan' ?></label>
+                        <label><?= $note != null ? $note : 'Tidak ada keterangan' ?></label>
                       </div>
                       <div class="row">
                         <label><b>SYARAT & KETENTUAN:</b></label><hr class="line">
                         <label>
-                          1. Barang tidak dapat dikembalikan, kecuali cacat produksi. <br>
-                          2. Mohon konfirmasi pembayaran ke admin sesuai nomor yang telah tercantum diatas.
+                          <?php foreach ($termsList as $term): ?>
+                            <li><?= $term != null ? htmlspecialchars(trim($term)) : 'Tidak ada syarat dan ketentuan' ?></li>
+                          <?php endforeach; ?>
                         </label>
                       </div>
                     </div>
